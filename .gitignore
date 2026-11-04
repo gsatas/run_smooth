@@ -1,0 +1,13 @@
+# environment
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# generated
+output/
+cache/
+scratch/
+
+# personal run data (GPS tracks reveal where you live and run)
+example_files/
