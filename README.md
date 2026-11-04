@@ -15,12 +15,37 @@ Writes `output/<name>_smoothed.tcx` plus `<name>_smoothed.png` (pace/diagnostics
 `<name>_smoothed_map.png` (matched route). Prints distance and km/mile splits next to what was
 recorded. To re-upload to Smashrun, delete the original activity first (it dedupes by start time).
 
-- `--map` snaps the run onto the OpenStreetMap street/path network (needs internet the first time
-  for each area; cached in `cache/`). Strongly recommended, especially for older watch files with
-  points every ~8 s.
+- `--map` snaps the run onto the OpenStreetMap street/path network. It needs internet the first
+  time for each area; the map is cached in ~2 km tiles under `cache/tiles/`. Strongly recommended,
+  especially for older watch files with points every ~8 s.
 - `--cadence` uses cadence to keep pace steady through GPS drift. Cadence outside your normal
   running band (wonky readings, walking) is ignored automatically.
 - Without flags, only the GPS smoother runs (no map, no cadence).
+
+### Smashrun
+
+The token is read from `~/.config/run-smoother/token` and only sent in a request header. Every run
+is saved untouched to `backups/<id>_original.json` before anything else happens.
+
+```
+# preview only: fetch, smooth, show before/after, splits and plots
+.venv/bin/python smooth_run.py --smashrun https://smashrun.com/<you>/run/<id>
+
+# replace the run on Smashrun (deletes it, uploads the smoothed version; restores on failure)
+.venv/bin/python smooth_run.py --smashrun <id> --apply
+
+# replace a run with a smoothed local original, e.g. after a manual fix
+.venv/bin/python smooth_run.py original.tcx --replace <id> --apply
+```
+
+Runs that look already processed are skipped unless you add `--force`. That covers file uploads,
+a headline distance that doesn't match the track, and runs this tool wrote (their external ID
+starts with `smoothrun-`). Your notes are left untouched.
+
+Smashrun has no in-place update for GPS tracks, so a replace deletes the run and re-uploads it.
+Smashrun keeps the same activity ID and your notes. Pauses are settled first: Smashrun zeroes
+distance across pauses, so false auto-pauses (you kept moving) are dropped and real stops are kept.
+Smashrun modes use the map and cadence by default (`--no-map` and `--no-cadence` turn them off).
 
 ## How it works
 

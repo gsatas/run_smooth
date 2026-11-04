@@ -11,3 +11,6 @@ scratch/
 
 # personal run data (GPS tracks reveal where you live and run)
 example_files/
+
+# original Smashrun activities (personal data)
+backups/

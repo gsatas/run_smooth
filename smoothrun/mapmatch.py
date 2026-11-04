@@ -33,6 +33,8 @@ class MatchConfig:
     splice_extend_s: float = 10.0  # max seconds a stretch is extended at each end
     splice_min_rate: float = 0.3   # m/s: cadence shortfall must be concentrated, not a slow drift
     splice_max_s: float = 90.0     # longer "off-network" stretches are GPS drift, not real
+    end_off_m: float = 25.0      # start/finish: matched point this far from the track ...
+    end_min_s: float = 15.0      # ... for this long -> you were off the map (track, lot, etc.)
     turn_cost: float = 3.0       # log-prob cost of switching to a differently named street
                                  # (runners, races especially, don't zig-zag between streets)
 
@@ -161,13 +163,34 @@ def match(net, t, x, y, cum_dist, cfg=MatchConfig()):
             choice[k - 1] = int(back[k][choice[k]])
     chosen = [cands[k][choice[k]] for k in range(n)]
 
-    raw_xy, obs_v = _route(net, chosen, t, obs, cum_dist, cfg)
+    # Start/finish off the map (running track, parking lot, front door): if the matched points
+    # stay far from the track for a while at either end, use the track's own shape there.
+    off = np.array([c[4] > cfg.end_off_m for c in chosen])
+    h = 0
+    while h < n - 1 and off[h]:
+        h += 1
+    if t[obs[h]] - t[obs[0]] < cfg.end_min_s:
+        h = 0
+    e = n - 1
+    while e > h and off[e]:
+        e -= 1
+    if t[obs[-1]] - t[obs[e]] < cfg.end_min_s:
+        e = n - 1
+    P = np.c_[x, y]
+    core_xy, core_v = _route(net, chosen[h:e + 1], t, obs[h:e + 1], cum_dist, cfg, P)
+    head = P[:obs[h]] if h > 0 else np.zeros((0, 2))
+    tail = P[obs[e] + 1:] if e < n - 1 else np.zeros((0, 2))
+    raw_xy = np.vstack([head, core_xy, tail])
+    obs_v = np.r_[obs[:h], len(head) + core_v,
+                  len(head) + len(core_xy) + (obs[e + 1:] - obs[e] - 1)].astype(int)
     raw_s = _cum(raw_xy)
     route_xy = despike(raw_xy, cfg.despike_m) if cfg.despike_m else raw_xy
     route_s = _cum(route_xy)
     # Re-place each matched point on the cleaned route, never moving backwards.
     from .along import project
     q = np.array([c[2:4] for c in chosen])
+    q[:h] = P[obs[:h]]
+    q[e + 1:] = P[obs[e + 1:]]
     guess = raw_s[obs_v] * (route_s[-1] / max(raw_s[-1], 1e-9))
     g, _ = project(route_xy, route_s, q[:, 0], q[:, 1], guess, 150.0)
     g = np.where(np.isfinite(g), g, guess)
@@ -291,7 +314,7 @@ def despike(P, max_leg, tol=3.0, step=1.0):
     return P
 
 
-def _route(net, chosen, t, obs, cum_dist, cfg):
+def _route(net, chosen, t, obs, cum_dist, cfg, track=None):
     """Polyline through the chosen candidates along network shortest paths.
     Returns the polyline and, for each observation, its vertex index in the polyline."""
     pts = [np.array(chosen[0][2:4])]
@@ -313,7 +336,10 @@ def _route(net, chosen, t, obs, cum_dist, cfg):
                     if best is None or tot < best[0]:
                         best = (tot, na, nb, pred)
             if best is None or not np.isfinite(best[0]):
-                pts.append(qb)  # disconnected (HMM break): straight line
+                # No connection through the map (HMM break): follow the track's own shape.
+                if track is not None:
+                    pts.extend(track[obs[k - 1] + 1:obs[k]])
+                pts.append(qb)
             else:
                 _, na, nb, pred = best
                 path = [nb]

@@ -33,6 +33,7 @@ class Track:
     speed: np.ndarray          # recorded speed m/s, NaN where missing
     dist: np.ndarray           # recorded cumulative distance m, NaN where missing
     start: datetime
+    alt: np.ndarray = None     # metres, NaN where missing
 
 
 def _float(el, path):
@@ -64,7 +65,8 @@ def read_tcx(path: str) -> Track:
     cad = np.array([_float(tp, "t:Extensions/x:TPX/x:RunCadence") for tp in points])
     spd = np.array([_float(tp, "t:Extensions/x:TPX/x:Speed") for tp in points])
     dist = np.array([_float(tp, "t:DistanceMeters") for tp in points])
-    return Track(tree, points, np.array(lap_idx), laps, t, lat, lon, cad, spd, dist, t0)
+    alt = np.array([_float(tp, "t:AltitudeMeters") for tp in points])
+    return Track(tree, points, np.array(lap_idx), laps, t, lat, lon, cad, spd, dist, t0, alt)
 
 
 def _set_child(parent, tag, text, after=()):
