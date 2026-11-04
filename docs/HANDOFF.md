@@ -100,6 +100,10 @@ into the log by hand.
   moving time, and the ID link `https://smashrun.com/<userName>/run/<id>` (username from
   `GET /v1/my/userinfo`). Targets: the workout scheduled on the run's date, a workout already
   linked to that run ID (update after smoothing), or a new unplanned run.
+- **Token updates:** an expired token (401) shows a clear message in the Smooth tab with an
+  Update Smashrun token box: link to https://api.smashrun.com/register (log in, type `client`),
+  token and passphrase fields. `POST /token` checks the token against `/my/userinfo` before
+  writing it (mode 600); only the token file is mounted read-write.
 - **Test activity:** **47383782** (uploaded 2026-11-04) is a copy of run 47363102 dated
   2026-11-04 07:00, with notes saying it's a test. The user approved it for testing. Delete it
   once testing is done.

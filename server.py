@@ -8,6 +8,8 @@ numbers and plots; it never changes Smashrun. Replace and restore do, and need t
                            or {"latest": true}: your most recent run with a GPS track
     POST /replace          {"job": "<preview job id>", "passphrase": "...", "force": false}
     POST /restore          {"activity_id": 123, "passphrase": "..."}
+    POST /token            {"token": "...", "passphrase": "..."}: check a new Smashrun token and
+                           save it. Never returned or logged.
     GET  /jobs/<id>        job status, and the result when it's done
     GET  /jobs/<id>/pace.png, /jobs/<id>/map.png
     GET  /healthz
@@ -231,6 +233,9 @@ def worker():
         try:
             job["result"] = clean(run(job))
             job["status"] = "done"
+        except S.TokenError:
+            job["status"], job["token_expired"] = "error", True
+            job["error"] = "Smashrun rejected the token. Personal tokens expire about every 60 days."
         except S.SmashrunError as e:
             job["status"], job["error"] = "error", str(e)
         except FileNotFoundError as e:
@@ -263,7 +268,7 @@ def add_job(kind="preview", **fields):
 
 
 def public(job):
-    keys = ("id", "kind", "status", "step", "activity_id", "error", "result", "created", "finished")
+    keys = ("id", "kind", "status", "step", "activity_id", "error", "token_expired", "result", "created", "finished")
     return {k: job[k] for k in keys if k in job}
 
 
@@ -289,6 +294,18 @@ def passphrase_problem(given):
         failures.append(now)
     time.sleep(1)
     return 403, "That passphrase isn't right."
+
+
+def save_token(token):
+    """Write the token in place. The file is its own read-write bind mount in Docker (the folder
+    around it is read-only), so it can't be swapped by rename; it's a few bytes, written at once."""
+    fd = os.open(TOKEN_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    try:
+        os.write(fd, token.encode())
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+    os.chmod(TOKEN_FILE, 0o600)
 
 
 def writes_enabled():
@@ -344,7 +361,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if path not in ("/preview", "/replace", "/restore"):
+        if path not in ("/preview", "/replace", "/restore", "/token"):
             return self.send_json(404, {"error": "Not found."})
         if (self.headers.get("Content-Type") or "").split(";")[0].strip().lower() != "application/json":
             return self.send_json(415, {"error": "Send JSON."})
@@ -361,6 +378,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.post_replace(body)
         if path == "/restore":
             return self.post_restore(body)
+        if path == "/token":
+            return self.post_token(body)
         link = str(body.get("link") or "").strip()
         latest = body.get("latest") is True
         if latest:
@@ -390,6 +409,24 @@ class Handler(BaseHTTPRequestHandler):
             job = add_job("replace", preview=p, activity_id=p["activity_id"])
             p["applied"] = job["id"]
         return self.send_json(202, public(job))
+
+    def post_token(self, body):
+        problem = passphrase_problem(body.get("passphrase"))
+        if problem:
+            return self.send_json(problem[0], {"error": problem[1]})
+        token = str(body.get("token") or "").strip()
+        if not token or len(token) > 500 or any(c.isspace() or not c.isprintable() for c in token):
+            return self.send_json(400, {"error": "Paste the token by itself, with no spaces."})
+        try:   # only save a token Smashrun accepts, so a typo can't break one that works
+            user = (S.Client(token=token)._call("GET", "/my/userinfo") or {}).get("userName")
+        except S.TokenError:
+            return self.send_json(400, {"error": "Smashrun didn't accept that token. Check you copied all of it."})
+        except S.SmashrunError:
+            return self.send_json(502, {"error": "Couldn't reach Smashrun to check the token. Try again."})
+        save_token(token)
+        _user.clear()   # the new token may belong to another account
+        log("saved a new Smashrun token")
+        return self.send_json(200, {"ok": True, "user": user})
 
     def post_restore(self, body):
         try:

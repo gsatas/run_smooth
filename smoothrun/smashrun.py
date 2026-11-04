@@ -21,6 +21,13 @@ class SmashrunError(RuntimeError):
     pass
 
 
+class TokenError(SmashrunError):
+    """Smashrun rejected the token (HTTP 401). Personal tokens expire about every 60 days."""
+
+
+TOKEN_PAGE = "https://api.smashrun.com/register"
+
+
 def activity_id(link_or_id):
     """Accept '47363104' or a link like https://smashrun.com/<user>/run/47363104/..."""
     s = str(link_or_id).strip()
@@ -37,11 +44,14 @@ def activity_id(link_or_id):
 
 
 class Client:
-    def __init__(self, token_file=DEFAULT_TOKEN):
-        with open(token_file) as f:
-            self._token = f.read().strip()
+    def __init__(self, token_file=DEFAULT_TOKEN, token=None):
+        """Reads the token from `token_file`, or uses `token` as given (e.g. to test a new one)."""
+        if token is None:
+            with open(token_file) as f:
+                token = f.read()
+        self._token = token.strip()
         if not self._token:
-            raise SmashrunError("token file %s is empty" % token_file)
+            raise TokenError("the Smashrun token is empty")
 
     def _call(self, method, path, body=None):
         # curl rather than urllib: macOS system Python's LibreSSL fails TLS with some hosts.
@@ -58,8 +68,8 @@ class Client:
             raise SmashrunError("%s %s failed: %s" % (method, path, out.stderr.decode()[:300]))
         code = int(code)
         if code == 401:
-            raise SmashrunError("Smashrun rejected the token (expired? personal tokens last ~60 "
-                                "days). Get a new one and update the token file.")
+            raise TokenError("Smashrun rejected the token. Personal tokens expire about every 60 "
+                             "days: get a new one at %s and save it to %s" % (TOKEN_PAGE, DEFAULT_TOKEN))
         if code >= 400:
             raise SmashrunError("%s %s -> HTTP %d: %s" % (method, path, code, payload[:300]))
         return json.loads(payload) if payload.strip() else None

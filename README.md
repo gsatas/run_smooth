@@ -69,7 +69,11 @@ read -rs -p "Passphrase: " p && printf '%s' "$p" > ~/.config/mile_marker/smooth_
 ```
 
 Both files are read on each request, so changes need no restart. Personal Smashrun tokens expire
-about every 60 days. Without the passphrase file, replace and restore are off. Five wrong
+about every 60 days. When one does, the Smooth tab says so and shows an Update Smashrun token box
+(also folded at the bottom of the tab): get a new token at https://api.smashrun.com/register
+(log in, type `client`), paste it and the passphrase. The service checks the token with Smashrun
+before saving it, and never returns or logs it. Only the token file is mounted writable; the
+folder around it stays read-only. Without the passphrase file, replace and restore are off. Five wrong
 passphrases lock them for 10 minutes.
 
 Replace refuses a preview with warnings unless you tick Replace anyway, re-checks the run just

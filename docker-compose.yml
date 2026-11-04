@@ -18,6 +18,12 @@ services:
         read_only: true
         bind:
           create_host_path: false    # fail loudly instead of creating a folder if it's missing
+      # The token file alone is writable, so a new token can be saved from the Smooth tab.
+      - type: bind
+        source: ${SMOOTH_SECRETS_DIR:-${HOME}/.config/mile_marker}/smashrun_token
+        target: /run/secrets/mile_marker/smashrun_token
+        bind:
+          create_host_path: false
     networks: [mile-marker]
 
 networks:
