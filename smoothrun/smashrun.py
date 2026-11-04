@@ -232,24 +232,60 @@ def delete(client, aid):
     return client._call("DELETE", "/my/activities/%d" % aid)
 
 
-def replace(client, old_id, new_activity, backup_path, log=print):
+def replace(client, old_id, new_activity, backup_path, log=print, external_id=None, info=None):
     """Delete `old_id` and upload `new_activity` in its place. If the upload fails, re-upload
-    the backed-up original so the run isn't lost. Returns the new activity id."""
+    the activity saved at `backup_path` so the run isn't lost. Returns the new activity id.
+    `info`, if given, receives Smashrun's "validations" notes for the upload."""
     if not os.path.exists(backup_path):
         raise SmashrunError("refusing to replace %d: no backup at %s" % (old_id, backup_path))
+    with open(backup_path) as f:
+        fallback = json.load(f)   # read before deleting, so a bad backup stops us early
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
-    log("deleting original %d (backup: %s)" % (old_id, backup_path))
+    log("deleting %d (backup: %s)" % (old_id, backup_path))
     delete(client, old_id)
     try:
-        resp = post(client, new_activity, "smoothrun-%d-%s" % (old_id, stamp))
-        log("uploaded smoothed run: %s" % json.dumps(resp)[:200])
+        resp = post(client, new_activity, external_id or "smoothrun-%d-%s" % (old_id, stamp))
+        log("uploaded replacement: %s" % json.dumps(resp)[:200])
     except Exception as e:
-        log("UPLOAD FAILED (%s) - restoring the original from backup" % e)
-        with open(backup_path) as f:
-            original = json.load(f)
-        post(client, original, "restore-%d-%s" % (old_id, stamp))
-        raise
-    new_id = _new_id(resp)
+        log("UPLOAD FAILED (%s) - putting back the backed-up version" % e)
+        try:
+            post(client, fallback, fallback.get("externalId") or "restore-%d-%s" % (old_id, stamp))
+        except Exception as e2:
+            raise SmashrunError("the upload failed (%s) and putting the run back also failed (%s). "
+                                "Run %d is deleted on Smashrun; its saved copy is %s"
+                                % (e, e2, old_id, os.path.basename(backup_path)))
+        raise SmashrunError("the upload failed, so the run was put back as it was: %s" % e)
+    if info is not None and isinstance(resp, dict):
+        info["validations"] = resp.get("validations") or {}
+    return _new_id(resp)
+
+
+def original_id_of(activity):
+    """For a run this tool wrote (externalId smoothrun-<old id>-<stamp>), the id it replaced."""
+    m = re.match(r"smoothrun-(\d+)-", activity.get("externalId") or "")
+    return int(m.group(1)) if m else None
+
+
+def restore(client, aid, backup_dir="backups", log=print, info=None):
+    """Put the original back in place of run `aid`, which this tool wrote. The current (smoothed)
+    version is saved first, so a failed restore can fall back to it. Returns the new id."""
+    current = client.get(aid)
+    orig_id = original_id_of(current)
+    if orig_id is None:
+        raise SmashrunError("run %d wasn't written by this tool, so there's no original to restore" % aid)
+    path = os.path.join(backup_dir, "%d_original.json" % orig_id)
+    if not os.path.exists(path):
+        raise SmashrunError("there's no backup of the original (%s)" % os.path.basename(path))
+    with open(path) as f:
+        original = json.load(f)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+    snap = os.path.join(backup_dir, "%d_smoothed_%s.json" % (aid, stamp))
+    with open(snap, "x") as f:
+        json.dump(current, f)
+    ext = original.get("externalId") or "restore-%d-%s" % (orig_id, stamp)
+    new_id = replace(client, aid, original, snap, log=log, external_id=ext, info=info)
+    if info is not None:
+        info.update(original_id=orig_id, distance_km=original.get("distance"), duration=original.get("duration"))
     return new_id
 
 

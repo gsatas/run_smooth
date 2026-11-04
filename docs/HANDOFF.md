@@ -86,14 +86,23 @@ into the log by hand.
 - **Step 1, done:** `server.py`, a stdlib HTTP service in its own container (`Dockerfile`,
   `docker-compose.yml`) on Mile Marker's Docker network. It runs preview jobs one at a time on a
   background thread and keeps the last 20 in memory. Mile Marker forwards an allowlist of routes
-  under `/api/smooth/` to it. **Preview only, no Smashrun writes.**
+  under `/api/smooth/` to it.
 - **Step 2, done:** the Smooth tab: paste a link, or tap Latest run (newest run with a GPS track)
   → before/after distance, splits, map and pace plots. Deployed and checked on real runs.
 - **Token path:** now `~/.config/mile_marker/smashrun_token` (moved by the user on 2026-11-04).
-- **Step 3, next:** Replace and Restore buttons with a confirm step. Writes need a **passphrase**
-  (agreed with the user), because Mile Marker has no login and anyone on the tailnet can open it.
-  Test on a throwaway activity first. Remind the user to re-flag races (the preview already
-  returns `is_race`).
+- **Step 3, built:** Replace and Restore in the Smooth tab, each with a second-tap confirm. Writes
+  need the **passphrase** in `~/.config/mile_marker/smooth_passphrase` (agreed with the user),
+  because Mile Marker has no login and anyone on the tailnet can open it. Safety checks are listed
+  in the README. Races get a reminder to re-flag them. Tested against an in-memory fake Smashrun
+  (replace, restore, stale run, failed uploads, lockout).
+- **Step 4, built:** logging from the Smooth tab into the Mile Marker plan. It logs whatever
+  Smashrun has now (smoothed after a replace, original otherwise): distance in the plan's unit,
+  moving time, and the ID link `https://smashrun.com/<userName>/run/<id>` (username from
+  `GET /v1/my/userinfo`). Targets: the workout scheduled on the run's date, a workout already
+  linked to that run ID (update after smoothing), or a new unplanned run.
+- **Test activity:** **47383782** (uploaded 2026-11-04) is a copy of run 47363102 dated
+  2026-11-04 07:00, with notes saying it's a test. The user approved it for testing. Delete it
+  once testing is done.
 - Date-style links (`/run/2026/11/3`) are now rejected with a clear message; before, they parsed
   as activity ID 2026. The user will paste ID links.
 

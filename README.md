@@ -49,8 +49,10 @@ Smashrun modes use the map and cadence by default (`--no-map` and `--no-cadence`
 
 ### Web service (Mile Marker's Smooth tab)
 
-`server.py` serves previews to Mile Marker's Smooth tab: paste a link, get before/after distance,
-splits and plots. It's **preview only** and never writes to Smashrun. It has no published port;
+`server.py` serves Mile Marker's Smooth tab: paste a link or pick your latest run, get
+before/after distance, splits and plots, then optionally replace the run on Smashrun or restore
+the original. Replace and restore need a passphrase; previews never change Smashrun. It has no
+published port;
 Mile Marker reaches it over Docker's `mile_marker_default` network, so start Mile Marker first.
 
 ```
@@ -59,9 +61,21 @@ PUID=$(id -u) PGID=$(id -g) docker compose up -d --build
 docker compose logs run-smooth    # should say "token found"
 ```
 
-The token is mounted read-only from `~/.config/mile_marker/smashrun_token` (set `SMASHRUN_TOKEN_FILE` to
-use another path). Compose refuses to start if that file is missing. Personal tokens expire about
-every 60 days: replace the file and the next preview uses it, with no restart.
+The folder `~/.config/mile_marker` is mounted read-only (set `SMOOTH_SECRETS_DIR` to use another).
+It holds `smashrun_token` and, to allow replacing runs, `smooth_passphrase`:
+
+```
+read -rs -p "Passphrase: " p && printf '%s' "$p" > ~/.config/mile_marker/smooth_passphrase && chmod 600 ~/.config/mile_marker/smooth_passphrase
+```
+
+Both files are read on each request, so changes need no restart. Personal Smashrun tokens expire
+about every 60 days. Without the passphrase file, replace and restore are off. Five wrong
+passphrases lock them for 10 minutes.
+
+Replace refuses a preview with warnings unless you tick Replace anyway, re-checks the run just
+before deleting it, and can be applied once per preview. Restore works on runs this tool wrote:
+it finds `backups/<old id>_original.json` from the run's `smoothrun-<old id>-...` external ID,
+and saves the smoothed version as `backups/<id>_smoothed_<time>.json` first.
 
 ## How it works
 

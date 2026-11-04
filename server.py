@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """HTTP service behind Mile Marker's Smooth tab.
 
-Preview only for now: it fetches a Smashrun run, backs it up, runs the pipeline and returns the
-before/after numbers and plots. It never writes to Smashrun.
+A preview fetches a Smashrun run, backs it up, runs the pipeline and returns the before/after
+numbers and plots; it never changes Smashrun. Replace and restore do, and need the passphrase.
 
     POST /preview          {"link": "<smashrun link or id>"}  -> 202 {"id": "<job id>", ...}
                            or {"latest": true}: your most recent run with a GPS track
+    POST /replace          {"job": "<preview job id>", "passphrase": "...", "force": false}
+    POST /restore          {"activity_id": 123, "passphrase": "..."}
     GET  /jobs/<id>        job status, and the result when it's done
     GET  /jobs/<id>/pace.png, /jobs/<id>/map.png
     GET  /healthz
 
-Jobs run one at a time on a background thread (the pipeline takes ~1 s with the local map, but
-the Overpass fallback can take minutes). Only the most recent jobs are kept, in memory.
+Jobs, writes included, run one at a time on a background thread (the pipeline takes ~1 s with
+the local map, but the Overpass fallback can take minutes). Only recent jobs are kept, in memory.
+Writes are refused without a passphrase file on the server.
 Listens on the Docker network only; Mile Marker forwards requests to it.
 """
+import hashlib
+import hmac
 import json
 import math
 import os
@@ -36,6 +41,8 @@ from smoothrun import smashrun as S
 HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "8000"))
 TOKEN_FILE = os.environ.get("TOKEN_FILE", S.DEFAULT_TOKEN)
+PASSPHRASE_FILE = os.environ.get("PASSPHRASE_FILE",
+                                 os.path.join(os.path.dirname(S.DEFAULT_TOKEN), "smooth_passphrase"))
 CACHE_DIR = os.environ.get("CACHE_DIR", "cache")
 BACKUP_DIR = os.environ.get("BACKUP_DIR", "backups")
 OUTPUT_DIR = os.environ.get("OUTPUT_DIR", os.path.join("output", "web"))
@@ -45,8 +52,11 @@ JOB_ID = re.compile(r"^[A-Za-z0-9_-]{8,40}$")
 PLOTS = {"pace.png", "map.png"}
 
 jobs = {}                 # id -> dict, insertion-ordered
-jobs_lock = threading.Lock()
+jobs_lock = threading.RLock()   # reentrant: post_replace calls add_job while holding it
 work = queue.Queue()
+failures = []             # times of recent wrong passphrases
+failures_lock = threading.Lock()
+MAX_FAILURES, FAILURE_WINDOW = 5, 600
 
 
 def clean(v):
@@ -65,6 +75,22 @@ def clean(v):
 
 def split_rows(t, dist, unit_m):
     return [{"frac": frac, "time_s": dt, "pace_s": pace} for frac, dt, pace in report.splits(t, dist, unit_m)]
+
+
+_user = {}
+
+
+def run_link(client, aid):
+    """The run's page on Smashrun, by ID (https://smashrun.com/<user>/run/<id>)."""
+    if not aid:
+        return None
+    if not _user.get("name"):
+        try:
+            _user["name"] = (client._call("GET", "/my/userinfo") or {}).get("userName")
+        except S.SmashrunError as e:   # a missing link mustn't fail the preview or a write
+            log("couldn't get the Smashrun username: %s" % e)
+            return None
+    return "https://smashrun.com/%s/run/%d" % (_user["name"], aid) if _user.get("name") else None
 
 
 def latest_gps_run(client):
@@ -88,6 +114,8 @@ def preview(job):
     original = client.get(aid)
     bpath = S.backup(original, BACKUP_DIR)
     warnings = S.warnings_for(original)
+    orig_id = S.original_id_of(original)
+    restorable = orig_id is not None and os.path.exists(os.path.join(BACKUP_DIR, "%d_original.json" % orig_id))
 
     job["step"] = "Smoothing the GPS track"
     run = S.to_run(original)
@@ -111,6 +139,10 @@ def preview(job):
         report.plot_map(os.path.join(folder, "map.png"), out.net, out.smoothed, out.match, title=title)
         plots.insert(0, "map")
 
+    # Kept for a replace: what to upload, and what the run looked like when previewed.
+    job["_new"], job["_bpath"] = new, bpath
+    job["_seen"] = {k: original.get(k) for k in SEEN_KEYS}
+
     t = run.t
     old_pauses = original.get("pauseIndexes") or []
     return {
@@ -119,8 +151,12 @@ def preview(job):
         "elapsed_s": float(t[-1] - t[0]),
         "points": int(len(t)),
         "is_race": bool(original.get("isRace")),
+        "link": run_link(client, aid),
+        "duration_s": float(original.get("duration") or 0),
+        "smoothed": orig_id is not None,
         "warnings": warnings,
         "backup": os.path.basename(bpath),
+        "restorable": restorable,
         "distance": {
             "smashrun_m": float(original.get("distance") or 0) * 1000.0,
             "recorded_m": float(rec[-1]),
@@ -141,13 +177,59 @@ def preview(job):
     }
 
 
+SEEN_KEYS = ("startDateTimeLocal", "distance", "duration", "externalId")
+
+
+def log(msg):
+    print("  " + msg, flush=True)
+
+
+def replace(job):
+    """Apply a finished preview: swap the run on Smashrun for its smoothed version."""
+    p = job["preview"]
+    aid = p["activity_id"]
+    client = S.Client(TOKEN_FILE)
+    job["step"] = "Checking the run hasn't changed since the preview"
+    current = client.get(aid)
+    if any(current.get(k) != v for k, v in p["_seen"].items()):
+        p.pop("applied", None)   # nothing was changed, so this preview may be tried again later
+        raise S.SmashrunError("the run changed on Smashrun since the preview. Preview it again first")
+    job["step"] = "Replacing the run on Smashrun"
+    info = {}
+    log("replace %d (preview %s)" % (aid, p["id"]))
+    new_id = S.replace(client, aid, p["_new"], p["_bpath"], log=log, info=info)
+    return {"action": "replace", "old_id": aid, "new_id": new_id,
+            "link": run_link(client, new_id or aid), "duration_s": float(p["_new"]["duration"]),
+            "distance_m": float(p["_new"]["distance"]) * 1000.0,
+            "is_race": bool(current.get("isRace")), "validations": info.get("validations") or {}}
+
+
+def restore(job):
+    """Put the backed-up original back in place of a run this tool wrote."""
+    aid = job["activity_id"]
+    client = S.Client(TOKEN_FILE)
+    job["step"] = "Restoring the original on Smashrun"
+    info = {}
+    log("restore %d" % aid)
+    new_id = S.restore(client, aid, BACKUP_DIR, log=log, info=info)
+    return {"action": "restore", "old_id": aid, "new_id": new_id, "original_id": info.get("original_id"),
+            "link": run_link(client, new_id or aid), "duration_s": float(info.get("duration") or 0),
+            "distance_m": float(info.get("distance_km") or 0) * 1000.0,
+            "validations": info.get("validations") or {}}
+
+
+RUNNERS = {"preview": (preview, "Smoothing failed"), "replace": (replace, "The replace failed"),
+           "restore": (restore, "The restore failed")}
+
+
 def worker():
     while True:
         job = work.get()
         job["status"] = "running"
         job["started"] = time.time()
+        run, failed = RUNNERS[job["kind"]]
         try:
-            job["result"] = clean(preview(job))
+            job["result"] = clean(run(job))
             job["status"] = "done"
         except S.SmashrunError as e:
             job["status"], job["error"] = "error", str(e)
@@ -159,16 +241,15 @@ def worker():
                 job["status"], job["error"] = "error", "A file the smoother needs is missing: %s" % e.filename
         except Exception as e:
             traceback.print_exc()
-            job["status"], job["error"] = "error", "Smoothing failed: %s" % e
+            job["status"], job["error"] = "error", "%s: %s" % (failed, e)
         finally:
             job["finished"] = time.time()
             job.pop("step", None)
             work.task_done()
 
 
-def add_job(link=None, latest=False):
-    job = {"id": secrets.token_urlsafe(12), "link": link, "latest": latest, "status": "queued",
-           "created": time.time()}
+def add_job(kind="preview", **fields):
+    job = dict(fields, id=secrets.token_urlsafe(12), kind=kind, status="queued", created=time.time())
     with jobs_lock:
         jobs[job["id"]] = job
         while len(jobs) > KEEP_JOBS:
@@ -182,8 +263,40 @@ def add_job(link=None, latest=False):
 
 
 def public(job):
-    keys = ("id", "status", "step", "activity_id", "error", "result", "created", "finished")
+    keys = ("id", "kind", "status", "step", "activity_id", "error", "result", "created", "finished")
     return {k: job[k] for k in keys if k in job}
+
+
+def passphrase_problem(given):
+    """None if `given` is the passphrase, else (status, message). Wrong guesses are slowed and
+    limited to MAX_FAILURES per FAILURE_WINDOW seconds."""
+    try:
+        with open(PASSPHRASE_FILE) as f:
+            expected = f.read().strip()
+    except FileNotFoundError:
+        expected = ""
+    if not expected:
+        return 503, "Changing runs is turned off: there's no passphrase set on the server."
+    now = time.time()
+    with failures_lock:
+        failures[:] = [t for t in failures if now - t < FAILURE_WINDOW]
+        if len(failures) >= MAX_FAILURES:
+            return 429, "Too many wrong passphrases. Try again in 10 minutes."
+    digest = lambda x: hashlib.sha256(x.encode()).digest()
+    if hmac.compare_digest(digest(str(given or "")), digest(expected)):
+        return None
+    with failures_lock:
+        failures.append(now)
+    time.sleep(1)
+    return 403, "That passphrase isn't right."
+
+
+def writes_enabled():
+    try:
+        with open(PASSPHRASE_FILE) as f:
+            return bool(f.read().strip())
+    except OSError:
+        return False
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -204,7 +317,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/healthz":
-            return self.send_json(200, {"ok": True, "token": os.path.isfile(TOKEN_FILE),
+            return self.send_json(200, {"ok": True, "token": os.path.isfile(TOKEN_FILE), "writes": writes_enabled(),
                                         "mapstore": os.path.isfile(os.path.join(CACHE_DIR, "mapstore.sqlite"))})
         m = re.match(r"^/jobs/([^/]+)(?:/([a-z]+\.png))?$", path)
         if not m or not JOB_ID.match(m.group(1)):
@@ -230,7 +343,8 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_POST(self):
-        if self.path.split("?")[0] != "/preview":
+        path = self.path.split("?")[0]
+        if path not in ("/preview", "/replace", "/restore"):
             return self.send_json(404, {"error": "Not found."})
         if (self.headers.get("Content-Type") or "").split(";")[0].strip().lower() != "application/json":
             return self.send_json(415, {"error": "Send JSON."})
@@ -239,10 +353,16 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(413, {"error": "Request too large."})
         try:
             body = json.loads(self.rfile.read(length) or b"{}")
-            link = str(body.get("link") or "").strip()
-            latest = body.get("latest") is True
-        except (ValueError, AttributeError):
+            if not isinstance(body, dict):
+                raise ValueError
+        except ValueError:
             return self.send_json(400, {"error": "The request body must be a JSON object."})
+        if path == "/replace":
+            return self.post_replace(body)
+        if path == "/restore":
+            return self.post_restore(body)
+        link = str(body.get("link") or "").strip()
+        latest = body.get("latest") is True
         if latest:
             return self.send_json(202, public(add_job(latest=True)))
         if not link:
@@ -253,14 +373,43 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(400, {"error": str(e)})
         return self.send_json(202, public(add_job(link=link)))
 
+    def post_replace(self, body):
+        with jobs_lock:
+            p = jobs.get(str(body.get("job") or ""))
+        if not p or p["kind"] != "preview" or p["status"] != "done":
+            return self.send_json(404, {"error": "That preview has expired. Run it again."})
+        problem = passphrase_problem(body.get("passphrase"))
+        if problem:
+            return self.send_json(problem[0], {"error": problem[1]})
+        if p["result"]["warnings"] and body.get("force") is not True:
+            return self.send_json(409, {"error": "This run looks already processed. Tick Replace anyway "
+                                                 "if you're sure."})
+        with jobs_lock:   # one replace per preview: a second tap must not delete the new run
+            if p.get("applied"):
+                return self.send_json(409, {"error": "This preview was already used. Preview the run again."})
+            job = add_job("replace", preview=p, activity_id=p["activity_id"])
+            p["applied"] = job["id"]
+        return self.send_json(202, public(job))
+
+    def post_restore(self, body):
+        try:
+            aid = int(body.get("activity_id"))
+        except (TypeError, ValueError):
+            return self.send_json(400, {"error": "Give the run's activity ID."})
+        problem = passphrase_problem(body.get("passphrase"))
+        if problem:
+            return self.send_json(problem[0], {"error": problem[1]})
+        return self.send_json(202, public(add_job("restore", activity_id=aid)))
+
 
 def main():
     shutil.rmtree(OUTPUT_DIR, ignore_errors=True)  # jobs live in memory, so old plots are orphans
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     threading.Thread(target=worker, daemon=True).start()
     srv = ThreadingHTTPServer((HOST, PORT), Handler)
-    print("run-smooth listening on http://%s:%d (preview only; token %s)"
-          % (HOST, PORT, "found" if os.path.isfile(TOKEN_FILE) else "MISSING"), flush=True)
+    print("run-smooth listening on http://%s:%d (token %s; replacing runs %s)"
+          % (HOST, PORT, "found" if os.path.isfile(TOKEN_FILE) else "MISSING",
+             "on" if writes_enabled() else "off: no passphrase file"), flush=True)
     srv.serve_forever()
 
 

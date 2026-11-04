@@ -11,9 +11,10 @@ services:
     volumes:
       - ./cache:/data/cache          # mapstore.sqlite and the Overpass tile cache
       - ./backups:/data/backups      # untouched originals of every run fetched
+      # smashrun_token, plus smooth_passphrase to allow replacing runs. Read on each request.
       - type: bind
-        source: ${SMASHRUN_TOKEN_FILE:-${HOME}/.config/mile_marker/smashrun_token}
-        target: /run/secrets/smashrun_token
+        source: ${SMOOTH_SECRETS_DIR:-${HOME}/.config/mile_marker}
+        target: /run/secrets/mile_marker
         read_only: true
         bind:
           create_host_path: false    # fail loudly instead of creating a folder if it's missing
