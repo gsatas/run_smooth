@@ -4,7 +4,7 @@ GPS smoother for the user's runs: realistic distance, splits and pace, written b
 
 - Read `docs/HANDOFF.md` first: current state, Smashrun API behaviour we discovered, safety rules
   and the web app plan. Usage and the pipeline design are in `README.md`.
-- Never print or log the Smashrun token (`~/.config/run-smoother/token`).
+- Never print or log the Smashrun token (`~/.config/mile_marker/smashrun_token`).
 - Never write to Smashrun without a backup in `backups/` and the user's go-ahead. Smashrun has
   no PUT, so a replace deletes the run and re-uploads it.
 - Check changes with `python validate_synthetic.py --trials 20` and against the real runs in

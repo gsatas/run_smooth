@@ -1,0 +1,25 @@
+# The smoother behind Mile Marker's Smooth tab. It has no published port: Mile Marker reaches it
+# over its Docker network and forwards the tab's requests. Start Mile Marker first so that
+# network exists.
+services:
+  run-smooth:
+    build: .
+    container_name: run-smooth
+    restart: unless-stopped
+    # Runs as your user so you own the files in ./backups. Set PUID and PGID when you start it.
+    user: "${PUID:-1000}:${PGID:-1000}"
+    volumes:
+      - ./cache:/data/cache          # mapstore.sqlite and the Overpass tile cache
+      - ./backups:/data/backups      # untouched originals of every run fetched
+      - type: bind
+        source: ${SMASHRUN_TOKEN_FILE:-${HOME}/.config/mile_marker/smashrun_token}
+        target: /run/secrets/smashrun_token
+        read_only: true
+        bind:
+          create_host_path: false    # fail loudly instead of creating a folder if it's missing
+    networks: [mile-marker]
+
+networks:
+  mile-marker:
+    external: true
+    name: ${MILE_MARKER_NETWORK:-mile_marker_default}

@@ -32,7 +32,7 @@ Smashrun. The user cares about distance and splits most, then a clean map.
 
 ## Smashrun API facts we learned (several are not in their docs)
 
-- **Auth:** a personal token in `~/.config/run-smoother/token`, sent only as
+- **Auth:** a personal token in `~/.config/mile_marker/smashrun_token`, sent only as
   `Authorization: Bearer` via curl's `-H @-` so it never appears in `ps` or logs. Never print it.
   Personal tokens expire about every 60 days. A 401 means the user needs a new token from the
   Smashrun API explorer. The limit is 250 requests/hour. `GET /v1/auth/{token}` returns no useful
@@ -77,7 +77,27 @@ Smashrun. The user cares about distance and splits most, then a clean map.
 - Do write tests on a throwaway activity first, one step at a time, and ask before any
   Smashrun write that isn't already approved.
 
-## Next: the web app on the home server
+## In progress: the Smooth tab in Mile Marker
+
+Decided on 2026-11-04: instead of a separate web app, the UI is a **Smooth tab in Mile Marker**
+(`../mile_marker`), kept separate from run logging for now. The user copies the smoothed distance
+into the log by hand.
+
+- **Step 1, done:** `server.py`, a stdlib HTTP service in its own container (`Dockerfile`,
+  `docker-compose.yml`) on Mile Marker's Docker network. It runs preview jobs one at a time on a
+  background thread and keeps the last 20 in memory. Mile Marker forwards an allowlist of routes
+  under `/api/smooth/` to it. **Preview only, no Smashrun writes.**
+- **Step 2, done:** the Smooth tab: paste a link, or tap Latest run (newest run with a GPS track)
+  → before/after distance, splits, map and pace plots. Deployed and checked on real runs.
+- **Token path:** now `~/.config/mile_marker/smashrun_token` (moved by the user on 2026-11-04).
+- **Step 3, next:** Replace and Restore buttons with a confirm step. Writes need a **passphrase**
+  (agreed with the user), because Mile Marker has no login and anyone on the tailnet can open it.
+  Test on a throwaway activity first. Remind the user to re-flag races (the preview already
+  returns `is_race`).
+- Date-style links (`/run/2026/11/3`) are now rejected with a clear message; before, they parsed
+  as activity ID 2026. The user will paste ID links.
+
+## Original plan: the web app on the home server
 
 The user is moving this work to their home server. It runs Docker services and is reachable only
 over Tailscale. The agreed design:
@@ -106,7 +126,7 @@ over Tailscale. The agreed design:
 - `backups/`: originals of every Smashrun run we've touched. Keep these.
 - `example_files/`: the user's TCX test runs, used for checks. `half_part_2.TCX` is the measured
   half; `40716350` and `47363104` are the Abbot Dash 5K, same course.
-- The token file `~/.config/run-smoother/token`.
+- The token file `~/.config/mile_marker/smashrun_token`.
 - `scratch/` and `output/` are disposable.
 
 ## Open items

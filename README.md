@@ -24,7 +24,7 @@ recorded. To re-upload to Smashrun, delete the original activity first (it dedup
 
 ### Smashrun
 
-The token is read from `~/.config/run-smoother/token` and only sent in a request header. Every run
+The token is read from `~/.config/mile_marker/smashrun_token` and only sent in a request header. Every run
 is saved untouched to `backups/<id>_original.json` before anything else happens.
 
 ```
@@ -46,6 +46,22 @@ Smashrun has no in-place update for GPS tracks, so a replace deletes the run and
 Smashrun keeps the same activity ID and your notes. Pauses are settled first: Smashrun zeroes
 distance across pauses, so false auto-pauses (you kept moving) are dropped and real stops are kept.
 Smashrun modes use the map and cadence by default (`--no-map` and `--no-cadence` turn them off).
+
+### Web service (Mile Marker's Smooth tab)
+
+`server.py` serves previews to Mile Marker's Smooth tab: paste a link, get before/after distance,
+splits and plots. It's **preview only** and never writes to Smashrun. It has no published port;
+Mile Marker reaches it over Docker's `mile_marker_default` network, so start Mile Marker first.
+
+```
+mkdir -p cache backups     # copy mapstore.sqlite into cache/ and your existing backups into backups/
+PUID=$(id -u) PGID=$(id -g) docker compose up -d --build
+docker compose logs run-smooth    # should say "token found"
+```
+
+The token is mounted read-only from `~/.config/mile_marker/smashrun_token` (set `SMASHRUN_TOKEN_FILE` to
+use another path). Compose refuses to start if that file is missing. Personal tokens expire about
+every 60 days: replace the file and the next preview uses it, with no restart.
 
 ## How it works
 

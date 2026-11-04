@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 import numpy as np
 
 API = "https://api.smashrun.com/v1"
-DEFAULT_TOKEN = os.path.expanduser("~/.config/run-smoother/token")
+DEFAULT_TOKEN = os.path.expanduser("~/.config/mile_marker/smashrun_token")
 MARKER = "[smoothed]"      # legacy notes marker; runs this tool writes get externalId "smoothrun-..."
 
 
@@ -26,6 +26,10 @@ def activity_id(link_or_id):
     s = str(link_or_id).strip()
     if s.isdigit():
         return int(s)
+    # Smashrun also links runs by date (/run/2026/11/3), which would otherwise parse as id 2026.
+    if re.search(r"/run/\d{4}/\d{1,2}/\d{1,2}(?:\D|$)", s):
+        raise SmashrunError("that link has the run's date, not its ID. Use a link that ends in the "
+                            "run's ID number, like .../run/47383521")
     m = re.search(r"/run/(\d+)", s) or re.search(r"(\d{6,})", s)
     if not m:
         raise SmashrunError("couldn't find an activity id in %r" % s)
@@ -220,17 +224,6 @@ def post(client, activity, external_id):
     path = _write_tmp(upload_body(activity, external_id))
     try:
         return client._call("POST", "/my/activities/", body=path)
-    finally:
-        os.remove(path)
-
-
-def put(client, aid, activity):
-    """Full in-place update of an existing activity."""
-    body = upload_body(activity, activity.get("externalId") or "smoothrun-%d" % aid)
-    body["activityId"] = aid
-    path = _write_tmp(body)
-    try:
-        return client._call("PUT", "/my/activities/%d" % aid, body=path)
     finally:
         os.remove(path)
 

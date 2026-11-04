@@ -1,0 +1,10 @@
+# Keep the map store, personal data and local environments out of the image.
+.git
+.venv
+cache
+backups
+output
+scratch
+example_files
+docs
+**/__pycache__
