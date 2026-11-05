@@ -1035,7 +1035,7 @@
   "id": "negative_split_once",
   "name": "Negative Split",
   "group": "Performance",
-  "description": "Run the second half of a run faster than the first.",
+  "description": "Split a run into quarters and run each one no slower than the last.",
   "levels": [],
   "first_cut": true
  },

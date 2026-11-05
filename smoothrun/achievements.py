@@ -25,7 +25,7 @@ from smoothrun import mirror
 
 MILE = 1609.344
 FT = 0.3048
-FACTS_VERSION = 3
+FACTS_VERSION = 4
 RESULT_VERSION = 1
 CATALOG = os.environ.get("ACH_CATALOG",
                          os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -236,8 +236,7 @@ def facts(a):
     f["km_splits"] = _splits(s, 1000.0)
     f["quarters"] = [[float(x) for x in np.diff(np.interp(np.arange(k * 4, k * 4 + 5) * MILE / 4, d, s["t"]))]
                      for k in range(len(f["mile_splits"]))]
-    half = d[-1] / 2
-    f["halves"] = [float(np.interp(half, d, s["t"])), float(s["t"][-1] - np.interp(half, d, s["t"]))]
+    f["fourths"] = [float(x) for x in np.diff(np.interp(np.linspace(0, d[-1], 5), d, s["t"]))]
     if d[-1] >= 2000:
         f["last_km_s"] = float(s["t"][-1] - np.interp(d[-1] - 1000, d, s["t"]))
         f["best_km_s"] = _best_effort(s, 1000.0)
@@ -565,7 +564,10 @@ def _solstice_day(r, june):
 
 
 def _negative(r):
-    return r["miles"] >= 2 and bool(r.get("halves")) and r["halves"][1] < r["halves"][0]
+    """Split the run into four equal-distance quarters: none slower than the one before, and the
+    last faster than the first (so an evenly paced run doesn't count)."""
+    q = r.get("fourths")
+    return r["miles"] >= 2 and bool(q) and all(q[i] <= q[i - 1] for i in range(1, 4)) and q[3] < q[0]
 
 
 def _mile_range(sp):

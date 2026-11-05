@@ -85,7 +85,7 @@ day = run(2, "2026-11-09T12:00", sunrise="2026-11-09T06:35:00", sunset="2026-11-
 assert results([night])["dark_side"]["earned"] and not results([day])["dark_side"]["earned"]
 
 # --- performance from splits and best efforts
-fast = run(1, "2026-06-01T07:00", 5.2, mile_splits=[600, 598, 599, 597, 600], halves=[1500, 1490],
+fast = run(1, "2026-06-01T07:00", 5.2, mile_splits=[600, 598, 599, 597, 600], fourths=[760, 755, 755, 740],
            best={"mile": 590, "5k": 1750, "10k": None, "half": None}, quarters=[[150, 150, 149, 151]],
            km_splits=[372] * 8)
 res = results([fast])
@@ -94,6 +94,10 @@ assert res["mile_sub_10"]["earned"] and not res["mile_sub_9"]["earned"] and res[
 assert res["5k_sub_30"]["earned"] and not res["5k_sub_25"]["earned"]
 assert res["negative_split_once"]["earned"] and not res["crescendo_3"]["earned"]
 assert results([run(1, "2026-06-01T07:00", 3.1, mile_splits=[700, 650, 600])])["crescendo_3"]["earned"]
+# negative split: a quarter that fades fails it, and so does a perfectly even run
+assert not results([run(1, "2026-06-01T07:00", 3.1, fourths=[700, 720, 690, 680])])["negative_split_once"]["earned"]
+assert not results([run(1, "2026-06-01T07:00", 3.1, fourths=[700, 700, 700, 700])])["negative_split_once"]["earned"]
+assert not results([run(1, "2026-06-01T07:00", 1.5, fourths=[700, 690, 680, 670])])["negative_split_once"]["earned"]
 assert results([run(1, "2026-06-01T07:00", 3.1, mile_splits=[800, 670])])["tortoise_hare"]["earned"]
 
 # --- weather and heat (Smashrun's one reading per run)
