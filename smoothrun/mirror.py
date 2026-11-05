@@ -113,7 +113,7 @@ def rebuild(root=None, state=None):
         runs.append(row)
     runs.sort(key=lambda r: r["start"] or "", reverse=True)
     index = {"version": SUMMARY_VERSION, "since": old.get("since"), "synced_at": old.get("synced_at"),
-             "last_sync": old.get("last_sync"), "removed": removed, "runs": runs}
+             "last_sync": old.get("last_sync"), "user_name": old.get("user_name"), "removed": removed, "runs": runs}
     os.makedirs(_dir(root=root), exist_ok=True)
     _write_atomic(_dir("index.json", root=root), index)
     return index
@@ -197,7 +197,15 @@ def sync(client, since=None, root=None, step=None, log=print):
               "removed": gone, "not_fetched": left}
     log("mirror sync: %d listed, %d new, %d updated, %d removed%s"
         % (len(listed), len(added), len(updated), len(gone), ", %d left for the next sync" % left if left else ""))
-    rebuild(root, state={"since": since, "synced_at": now, "last_sync": result, "removed": removed})
+    user = state.get("user_name")
+    try:   # for links to each run's page; a missing name mustn't fail the sync
+        user = (client._call("GET", "/my/userinfo") or {}).get("userName") or user
+    except S.TokenError:
+        raise
+    except S.SmashrunError as e:
+        log("couldn't get the Smashrun username: %s" % e)
+    rebuild(root, state={"since": since, "synced_at": now, "last_sync": result, "removed": removed,
+                         "user_name": user})
     return result
 
 

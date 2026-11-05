@@ -9,6 +9,7 @@ def act(i, day, upd="u1", ext=""):
 class Fake:
     def __init__(s, runs): s.runs, s.gets, s.calls = runs, [], []
     def _call(s, m, path):
+        if path == "/my/userinfo": return {"userName": "runner"}
         s.calls.append(path); page = int(path.split("page=")[1])
         rows = sorted(s.runs.values(), key=lambda a: a["startDateTimeLocal"], reverse=True)
         return [{k: v for k, v in a.items() if not k.startswith("recording")} for a in rows][page*100:(page+1)*100]
@@ -24,6 +25,7 @@ del runs[1]; runs[3] = act(3, "11-04")
 f.gets.clear(); r = mirror.sync(f, "2026-01-01", root, log=lambda m: None)
 assert r["updated"] == [2] and r["new"] == [3] and r["removed"] == [1], r
 idx = mirror.load(root)
+assert idx["user_name"] == "runner"
 assert [x["id"] for x in idx["runs"]] == [3, 2, 1]
 assert idx["runs"][1]["smoothed"] and idx["runs"][1]["smoothed_from"] == 2
 assert "removed" in idx["runs"][2] and abs(idx["runs"][0]["pace_s_per_km"] - 360) < 1e-9

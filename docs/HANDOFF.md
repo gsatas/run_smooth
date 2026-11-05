@@ -122,8 +122,12 @@ stats and plots on it, kept separate from the plan and Smooth features.
   `SYNC_SINCE=2026-01-01`: the user's comeback runs (4 at first sync). The older backlog is to
   be copied later. Summaries are rebuilt from the saved files when `SUMMARY_VERSION` changes.
   Tests against a fake client: `python test_mirror.py`.
-- **Phase 2, next:** a Stats tab in Mile Marker in its own `public/stats.js`: Sync now, this
-  week/month/year totals, weekly distance bars, pace over time, run list.
+- **Phase 2, done (same branches):** the Stats tab, all in Mile Marker's `public/stats.js`
+  (index.html only has the nav link, view, route hook and CSS). Sync now; this week / month /
+  year / last 30 days with a comparison only when the earlier stretch is inside the copy; weekly
+  distance (last 12 weeks, from SYNC_SINCE); pace per run (faster higher, races as rings, line =
+  pace of the last 5 runs together); sortable run list linking to Smashrun (username saved at
+  sync). Phones hide the climb and temperature columns. mi/km is per device (localStorage).
 - **Phase 3:** one-run page: splits, pace/elevation/cadence vs distance, route as SVG.
 - **Later:** achievements (the user's examples are in `~/RunningAchievements.xlsx`), best efforts
   inside runs, PRs, calendar heatmap, backlog sync.
