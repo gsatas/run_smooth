@@ -26,8 +26,8 @@ from smoothrun import mirror, places, weather
 
 MILE = 1609.344
 FT = 0.3048
-FACTS_VERSION = 6
-RESULT_VERSION = 4
+FACTS_VERSION = 7
+RESULT_VERSION = 5
 CATALOG = os.environ.get("ACH_CATALOG",
                          os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                       "achievements", "catalog.json"))
@@ -236,7 +236,7 @@ def facts(a):
         return f
     d = s["d"]
     f["track_mi"] = float(d[-1] / MILE)
-    f["best"] = {k: _best_effort(s, m) for k, m in (("mile", MILE), ("5k", 5000.0), ("10k", 10000.0), ("half", 21097.5))}
+    f["best"] = {k: _best_effort(s, m) for k, m in (("mile", MILE), ("5k", 5000.0), ("10k", 10000.0), ("half", 21097.5), ("marathon", 42195.0))}
     f["mile_splits"] = _splits(s, MILE)
     f["km_splits"] = _splits(s, 1000.0)
     f["quarters"] = [[float(x) for x in np.diff(np.interp(np.arange(k * 4, k * 4 + 5) * MILE / 4, d, s["t"]))]
@@ -768,6 +768,103 @@ def _boroughs_by(rs, key):
     return seen
 
 
+# ---------------------------------------------------------------- personal records
+
+PR_KEYS = ("mile", "5k", "10k", "half", "marathon")
+
+
+def pr_events(rs, improvements=False):
+    """Each time a run set a best at a distance, in order. The first effort at a distance is a best
+    too, unless `improvements` (then only runs that beat an earlier best count)."""
+    best, out = {}, []
+    for r in rs:
+        for k in PR_KEYS:
+            t = (r.get("best") or {}).get(k)
+            if not t:
+                continue
+            prev = best.get(k)
+            if prev is None or t < prev[0]:
+                if prev is not None or not improvements:
+                    out.append({"key": k, "t": t, "date": r["date"], "run": r["id"],
+                                "prev": prev[0] if prev else None, "prev_date": prev[1] if prev else None})
+                best[k] = (t, r["date"])
+    return out
+
+
+def _days_between(a, b):
+    return (_d(b) - _d(a)).days
+
+
+def _most_within(events, days, distinct=False):
+    """Most events (or distinct distances) inside any window of `days` days."""
+    best = 0
+    for i, e in enumerate(events):
+        win = [x for x in events[i:] if _days_between(e["date"], x["date"]) < days]
+        best = max(best, len({x["key"] for x in win}) if distinct else len(win))
+    return best
+
+
+def _stood(rs, days):
+    return sum(1 for e in pr_events(rs) if e["prev_date"] and _days_between(e["prev_date"], e["date"]) >= days)
+
+
+def _improved_by(rs, key, frac):
+    return sum(1 for e in pr_events(rs, True) if e["key"] == key and (e["prev"] - e["t"]) / e["prev"] >= frac - 1e-9)
+
+
+def _speed_surprise(rs):
+    """Runs of a mile or more whose average pace beat your best 5K pace before that run."""
+    best5, n = None, 0
+    for r in rs:
+        if best5 and r["miles"] >= 1 and r["moving_s"] > 0 and r["moving_s"] / (r["miles"] * MILE) < best5 / 5000.0:
+            n += 1
+        t = (r.get("best") or {}).get("5k")
+        if t and (best5 is None or t < best5):
+            best5 = t
+    return n
+
+
+def _speed_on_longest(rs):
+    """Runs that were your longest yet and also set a new mile best."""
+    mile_prs = {e["run"] for e in pr_events(rs, True) if e["key"] == "mile"}
+    longest, n = 0.0, 0
+    for r in rs:
+        if r["miles"] > longest:
+            if longest and r["id"] in mile_prs:
+                n += 1
+            longest = r["miles"]
+    return n
+
+
+def _old_reliable(rs):
+    """Runs that came within 1% of a best without beating it."""
+    best, n = {}, 0
+    for r in rs:
+        close = False
+        for k in PR_KEYS:
+            t = (r.get("best") or {}).get(k)
+            if not t:
+                continue
+            if k in best and best[k] <= t <= best[k] * 1.01:
+                close = True
+            best[k] = min(best.get(k, t), t)
+        n += close
+    return n
+
+
+def records(rs):
+    """{distance: {"t", "date", "run"}}: the best at each distance in these runs."""
+    out = {}
+    for e in pr_events(rs):
+        out[e["key"]] = {"t": e["t"], "date": e["date"], "run": e["run"]}
+    return out
+
+
+def ALL(rule):
+    """Counts every run in the copy, not only those since ACH_SINCE."""
+    return {**rule, "all": True}
+
+
 def NEEDS(rule, *keys):
     """A rule that can't be worked out until these settings exist; the page says which."""
     words = {"birthday": "Add your birthday in Settings.", "home_tz": "Set your home time zone in Settings.",
@@ -931,6 +1028,25 @@ R.update({
     "the_long_loop": RUN(lambda r: bool(_pl(r, "cp_loop"))),
     "waterfront_property": RUN(lambda r: _pl(r, "waterfront_m", 0) >= MILE),
     "tourist_season": RUN(lambda r: bool(_pl(r, "times_square"))),
+    # Personal records. All-time ones use every run (back to 2014); the rest, the comeback since ACH_SINCE.
+    "pr_first_mile": ALL(HIST(lambda rs: sum(e["key"] == "mile" for e in pr_events(rs)), "records")),
+    "pr_5k": ALL(HIST(lambda rs: sum(e["key"] == "5k" for e in pr_events(rs)), "records")),
+    "pr_10k": ALL(HIST(lambda rs: sum(e["key"] == "10k" for e in pr_events(rs)), "records")),
+    "pr_half": ALL(HIST(lambda rs: sum(e["key"] == "half" for e in pr_events(rs)), "records")),
+    "pr_marathon": ALL(HIST(lambda rs: sum(e["key"] == "marathon" for e in pr_events(rs)), "records")),
+    "pr_three_distances": ALL(HIST(lambda rs: len({e["key"] for e in pr_events(rs)}), "distances")),
+    "pr_five_distances": ALL(HIST(lambda rs: len({e["key"] for e in pr_events(rs)}), "distances")),
+    "pr_break_6months": ALL(HIST(lambda rs: _stood(rs, 182), "records")),
+    "pr_break_year": ALL(HIST(lambda rs: _stood(rs, 365), "records")),
+    "pr_three_in_30": HIST(lambda rs: _most_within(pr_events(rs, True), 30, distinct=True), "distances"),
+    "5k_improve_5pct": HIST(lambda rs: _improved_by(rs, "5k", 0.05), "records"),
+    "5k_improve_10pct": HIST(lambda rs: _improved_by(rs, "5k", 0.10), "records"),
+    "10k_improve_5pct": HIST(lambda rs: _improved_by(rs, "10k", 0.05), "records"),
+    "pr_comeback_90": HIST(lambda rs: sum(1 for e in pr_events(rs, True) if _days_between(e["prev_date"], e["date"]) >= 90), "records"),
+    "5k_three_prs_60": HIST(lambda rs: _most_within([e for e in pr_events(rs, True) if e["key"] == "5k"], 60), "records"),
+    "speed_surprise": HIST(_speed_surprise, "runs"),
+    "speed_on_longest": HIST(_speed_on_longest, "runs"),
+    "old_reliable": HIST(_old_reliable, "runs"),
     # Personal dates and travel (Mile Marker's Settings page and plans)
     "birthday_suit": NEEDS(HIST(_birthday_years, "birthdays"), "birthday"),
     "birthday_week": NEEDS(HIST(_birthday_week, "days"), "birthday"),
@@ -966,6 +1082,7 @@ TARGETS = {
     "the_commitment": 1, "no_days_off": 1, "the_usual": 1, "hill_climber": 1000, "vertical_mile": 5280,
     "mountain_goat": 5000, "stairway_to_heaven": 10000, "what_goes_up": 500, "race_day": 1, "triple_crown": 3,
     "double_header": 2, "borough_call": 5, "concrete_jungle": 3,
+    "pr_three_distances": 3, "pr_five_distances": 5, "pr_three_in_30": 3, "5k_three_prs_60": 3, "old_reliable": 5,
 }
 
 
@@ -986,6 +1103,9 @@ SERIES = {
     "negative_split_once": "negative", "negative_split_three": "negative",
     "singing_in_the_rain": "rain", "rain_check": "rain", "snow_problem": "snow", "snowflake": "snow",
     "race_day": "races", "serial_racer": "races",
+    "pr_three_distances": "pr_distances", "pr_five_distances": "pr_distances",
+    "pr_break_6months": "pr_stood", "pr_break_year": "pr_stood",
+    "5k_improve_5pct": ("5k_jump", 1), "5k_improve_10pct": ("5k_jump", 2),
 }
 
 
@@ -1017,9 +1137,11 @@ def _levels(entry, rule):
     return [TARGETS.get(entry["id"], 1)]
 
 
-def evaluate(catalog, runs):
-    """One result per first-cut catalog entry: levels reached (with date and run) and progress."""
-    runs = sorted(runs, key=lambda r: r["start"])
+def evaluate(catalog, runs, all_runs=None):
+    """One result per first-cut catalog entry: levels reached (with date and run) and progress.
+    Rules marked "all" look at all_runs (every run in the copy) instead of runs."""
+    recent = sorted(runs, key=lambda r: r["start"])
+    every = sorted(all_runs if all_runs is not None else runs, key=lambda r: r["start"])
     out = []
     for entry in catalog:
         if not entry.get("first_cut"):
@@ -1031,6 +1153,7 @@ def evaluate(catalog, runs):
             print("  achievements: no rule for %s" % entry["id"], flush=True)
             continue
         levels = _levels(entry, rule)
+        runs = every if rule.get("all") else recent
         earned = []
         missing = rule["needs"]() if "needs" in rule else None
         if missing:
@@ -1073,21 +1196,25 @@ def load_catalog():
 def compute(root=None):
     """Recompute from the run copy and save mirror/achievements.json."""
     index = mirror.load(root)
-    rows = [r for r in index["runs"] if not r.get("removed") and (r.get("date") or "") >= ACH_SINCE
+    rows = [r for r in index["runs"] if not r.get("removed")
             and r.get("distance_m", 0) > 0 and (r.get("type") or "running") == "running"]
     catalog = load_catalog()
-    runs = load_facts(rows, root)
+    every = load_facts(rows, root)
+    runs = [r for r in every if r["date"] >= ACH_SINCE]
     wx = weather.for_runs(runs, root)
     runs = [with_weather(r, wx.get(r["id"])) for r in runs]
     load_context(runs)
-    results = evaluate(catalog, runs)
+    results = evaluate(catalog, runs, every)
+    by_start = lambda rs: sorted(rs, key=lambda r: r["start"])
     by_id = {e["id"]: e for e in catalog}
     for r in results:
         e = by_id[r["id"]]
         r.update(name=e["name"], group=e["group"], description=e["description"])
     doc = {"version": RESULT_VERSION, "facts_version": FACTS_VERSION, "since": ACH_SINCE,
            "computed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-           "synced_at": index.get("synced_at"), "runs": len(rows),
+           "synced_at": index.get("synced_at"), "runs": len(runs), "all_runs": len(every),
+           # Bests at each distance: all-time, and since ACH_SINCE (the comeback).
+           "records": {"all": records(by_start(every)), "since": records(by_start(runs))},
            # For Mile Marker's Settings page: where you run, and which counts as home.
            "places": CTX["places"], "home_place": CTX["home_place"], "anniversary": CTX["first"],
            "later": [{"id": e["id"], "name": e["name"], "group": e["group"], "description": e["description"],

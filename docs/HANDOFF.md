@@ -172,7 +172,12 @@ stats and plots on it, kept separate from the plan and Smooth features.
     takes runs before SYNC_SINCE (syncs never touch those) and keeps manual entries with no recording.
     Achievements still count from ACH_SINCE only. Stats has a range picker for the run list and pace
     chart (since SYNC_SINCE by default, all runs, or a year).
-  Next: the 18 PR achievements, from all runs (the user's decision: distance PRs use the old runs).
+  - PRs (2026-11-05), all 244 now computed. Split by type (user's choice): record achievements
+    (5K/10K/Half/Marathon Record, First Fastest, Speedster, Record Breaker, Breakthrough, Long Time
+    Coming) are `ALL(...)` rules over every run in the copy; progress ones count only improvements
+    on bests since ACH_SINCE. Best efforts are the fastest stretch within any run (moving time).
+    Speed Surprise = a run's average pace beats your best 5K pace. `records` (all-time and since)
+    is in achievements.json and shown as a Records panel on the achievements page.
 - **Later:** calendar heatmap, backlog sync (also needed for PRs).
 
 ## Original plan: the web app on the home server

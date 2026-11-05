@@ -239,4 +239,33 @@ far = dash(5, "2027-03-01T08:00", start_ll=[40.80, -73.952])                    
 assert results(rs[2:3] + [far])["back_for_more"]["value"] == 1
 assert results(rs[2:3] + [dict(far, miles=6.2)])["back_for_more"]["value"] == 0
 
+# --- personal records: all-time ones see every run, comeback ones only runs since ACH_SINCE
+def pr(i, when, miles=3.0, moving=1800, **best):
+    return run(i, when, miles, moving, best={"mile": None, "5k": None, "10k": None, "half": None, "marathon": None, **best})
+
+
+old = [pr(1, "2014-06-01T07:00", mile=560, **{"5k": 1900}), pr(2, "2014-07-01T07:00", mile=545),
+       pr(3, "2015-05-01T07:00", **{"5k": 1575, "10k": 3708}), pr(4, "2020-01-26T07:00", mile=455)]
+new = [pr(10, "2026-10-24T07:00", miles=3.15, moving=2280, mile=717, **{"5k": 2278}),
+       pr(11, "2026-10-31T07:00", miles=3.11, moving=2122, mile=640, **{"5k": 2069}),       # 5K 9.2% better
+       pr(12, "2026-11-03T07:00", miles=3.2, moving=1980, mile=635, **{"5k": 2075}),        # within 1% of 2069
+       pr(13, "2026-11-05T07:00", miles=1.2, moving=480)]                                     # 6:40 pace: faster than 5K pace
+assert [e["key"] for e in A.pr_events(old)] == ["mile", "5k", "mile", "5k", "10k", "mile"]
+assert [(e["key"], e["run"]) for e in A.pr_events(new, True)] == [("mile", 11), ("5k", 11), ("mile", 12)]
+res = {x["id"]: x for x in A.evaluate(CAT, new, old + new)}
+assert earned(res, "pr_5k") == [(1, "2014-06-01", 1)] and earned(res, "pr_three_distances") == [(3, "2015-05-01", 3)]
+assert not res["pr_five_distances"]["earned"] and res["pr_five_distances"]["value"] == 3
+assert earned(res, "pr_break_year") == [(1, "2020-01-26", 4)] and earned(res, "pr_break_6months") == [(1, "2015-05-01", 3)]
+assert earned(res, "5k_improve_5pct") == [(1, "2026-10-31", 11)] and not res["5k_improve_10pct"]["earned"]
+assert earned(res, "speed_on_longest") == [(1, "2026-11-03", 12)]   # 3.2 mi, longest yet, and a mile best
+assert res["speed_surprise"]["value"] == 3 and earned(res, "speed_surprise") == [(1, "2026-10-31", 11)]  # 11:22/mi beat 12:13
+assert res["old_reliable"]["value"] == 1                                # run 12's 5K: within 1% of 2069
+assert res["pr_three_in_30"]["value"] == 2 and not res["pr_comeback_90"]["earned"]
+assert not res["pr_marathon"]["earned"] and A.series_of("5k_improve_10pct") == ("5k_jump", 2)
+assert A.records(new)["5k"] == {"t": 2069, "date": "2026-10-31", "run": 11} and A.records(old)["mile"]["t"] == 455
+late = new + [pr(14, "2027-02-10T07:00", **{"5k": 2000}), pr(15, "2027-02-20T07:00", mile=600, **{"10k": 4500})]
+res = {x["id"]: x for x in A.evaluate(CAT, late, old + late)}
+assert earned(res, "pr_comeback_90") == [(1, "2027-02-10", 14)]       # 5K best had stood since Oct 31
+assert res["pr_three_in_30"]["value"] == 2                              # a first 10K isn't an improvement
+
 print("all achievement tests passed")

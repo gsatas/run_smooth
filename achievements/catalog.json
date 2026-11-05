@@ -859,73 +859,65 @@
   "id": "pr_first_mile",
   "name": "First Fastest",
   "group": "Performance",
-  "description": "Set your first mile record.",
+  "description": "Set your first mile best. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_5k",
   "name": "5K Record",
   "group": "Performance",
-  "description": "Set a new 5K best.",
+  "description": "Set a 5K best. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_10k",
   "name": "10K Record",
   "group": "Performance",
-  "description": "Set a new 10K best.",
+  "description": "Set a 10K best. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_half",
   "name": "Half Marathon Record",
   "group": "Performance",
-  "description": "Set a new half marathon best.",
+  "description": "Set a half marathon best. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_marathon",
   "name": "Marathon Record",
   "group": "Performance",
-  "description": "Set a new marathon best.",
+  "description": "Set a marathon best. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_three_distances",
   "name": "Speedster",
   "group": "Performance",
-  "description": "Set bests at 3 different distances.",
+  "description": "Hold bests at 3 of the mile, 5K, 10K, half and marathon. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_five_distances",
   "name": "Record Breaker",
   "group": "Performance",
-  "description": "Hold bests at the mile, 5K, 10K, half marathon and marathon.",
+  "description": "Hold bests at the mile, 5K, 10K, half marathon and marathon. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_three_in_30",
   "name": "On a Roll",
   "group": "Performance",
-  "description": "Set bests at 3 distances within 30 days.",
+  "description": "Improve your 2026 bests at 3 distances within 30 days.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "mile_sub_12",
@@ -1107,82 +1099,73 @@
   "id": "5k_improve_5pct",
   "name": "Getting Faster",
   "group": "Performance",
-  "description": "Beat your 5K best by 5% or more.",
+  "description": "Improve your 2026 5K best by 5% or more in one go.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "5k_improve_10pct",
   "name": "Big Improvement",
   "group": "Performance",
-  "description": "Beat your 5K best by 10% or more.",
+  "description": "Improve your 2026 5K best by 10% or more in one go.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "10k_improve_5pct",
   "name": "The Next Level",
   "group": "Performance",
-  "description": "Beat your 10K best by 5% or more.",
+  "description": "Improve your 2026 10K best by 5% or more in one go.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_break_6months",
   "name": "Breakthrough",
   "group": "Performance",
-  "description": "Beat a best that has stood for 6 months.",
+  "description": "Beat a best that had stood for 6 months. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_break_year",
   "name": "Long Time Coming",
   "group": "Performance",
-  "description": "Beat a best that has stood for a year.",
+  "description": "Beat a best that had stood for a year. All runs count.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "pr_comeback_90",
   "name": "The Comeback Trail",
   "group": "Performance",
-  "description": "Set a best at a distance that hadn’t improved in 90 days.",
+  "description": "Improve a 2026 best that hadn’t moved in 90 days.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "5k_three_prs_60",
   "name": "Consistent Progress",
   "group": "Performance",
-  "description": "Improve your 5K best 3 times within 60 days.",
+  "description": "Improve your 2026 5K best 3 times within 60 days.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "speed_surprise",
   "name": "Speed Surprise",
   "group": "Performance",
-  "description": "Run a mile faster than your best 5K pace.",
+  "description": "Run a whole run faster than your best 2026 5K pace.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "speed_on_longest",
   "name": "Speed on the Long Run",
   "group": "Performance",
-  "description": "Run your fastest mile during your longest run.",
+  "description": "Set a 2026 mile best on a run that’s also your longest of 2026.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "tortoise_hare",
@@ -1196,10 +1179,9 @@
   "id": "old_reliable",
   "name": "Old Reliable",
   "group": "Performance",
-  "description": "Come within 1% of one of your bests 5 times.",
+  "description": "Come within 1% of one of your 2026 bests 5 times.",
   "levels": [],
-  "first_cut": false,
-  "later": "earlier PRs"
+  "first_cut": true
  },
  {
   "id": "make_a_wish",
