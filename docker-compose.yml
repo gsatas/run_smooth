@@ -12,6 +12,8 @@ services:
       - ./cache:/data/cache          # mapstore.sqlite and the Overpass tile cache
       - ./backups:/data/backups      # untouched originals of every run fetched
       - ./mirror:/data/mirror        # local copy of your runs for Mile Marker's stats
+      # Mile Marker's settings (birthday, home) and plans, for the personal achievements.
+      - ${MILE_MARKER_DATA:-../mile_marker/data}:/data/mile_marker:ro
       # smashrun_token, plus smooth_passphrase to allow replacing runs. Read on each request.
       - type: bind
         source: ${SMOOTH_SECRETS_DIR:-${HOME}/.config/mile_marker}

@@ -148,7 +148,14 @@ stats and plots on it, kept separate from the plan and Smooth features.
   - Weather uses Smashrun's single reading per run, often missing for API uploads (3 of the
     first 4 runs have none). Wind is assumed to be km/h. Sunrise/sunset, moon phases and
     solstices are computed locally. Best efforts and splits use moving time.
-  Later: earlier PRs, NYC map shapes, birthday/time-zone settings, detailed weather, race names.
+  - Personal dates (2026-11-05): Mile Marker has a Settings page (#settings: About you, import,
+    plans and backups). It saves `data/settings.json` (birthday MM-DD, home_place, home_tz), and
+    run_smooth reads it and the plans read-only at `/data/mile_marker` (`MM_DATA`). Home is a place
+    from your runs ("City, State"; automatic = the one you run from most); travel = starting 100+
+    miles from its median start. Anniversary = first run since ACH_SINCE. Training on Tour counts
+    plan workouts marked Done on a travel day. Jet Lag = other UTC offset and 0–5 AM at home.
+    Results are recomputed when settings or plans change; unset settings show "needs".
+  Later: earlier PRs, NYC map shapes, detailed weather, race names.
 - **Later:** calendar heatmap, backlog sync (also needed for PRs).
 
 ## Original plan: the web app on the home server

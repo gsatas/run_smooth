@@ -1727,8 +1727,7 @@
    5,
    10
   ],
-  "first_cut": false,
-  "later": "personal settings"
+  "first_cut": true
  },
  {
   "id": "intervention",
@@ -1934,7 +1933,7 @@
   "id": "birthday_week",
   "name": "Birthday Week",
   "group": "Place, Seasonal & Life",
-  "description": "Run on 3 days in the week around your birthday.",
+  "description": "Run on 3 days in your birthday week: the day itself and 3 days either side.",
   "levels": [
    3,
    4,
@@ -1942,8 +1941,7 @@
    6,
    7
   ],
-  "first_cut": false,
-  "later": "personal settings"
+  "first_cut": true
  },
  {
   "id": "half_birthday",
@@ -1951,14 +1949,13 @@
   "group": "Place, Seasonal & Life",
   "description": "Run on your half birthday.",
   "levels": [],
-  "first_cut": false,
-  "later": "personal settings"
+  "first_cut": true
  },
  {
   "id": "anniversary_run",
   "name": "Anniversary Run",
   "group": "Place, Seasonal & Life",
-  "description": "Run on the anniversary of the day you started tracking achievements.",
+  "description": "Run on the anniversary of your first run of 2026.",
   "levels": [
    1,
    2,
@@ -1966,8 +1963,7 @@
    5,
    10
   ],
-  "first_cut": false,
-  "later": "personal settings"
+  "first_cut": true
  },
  {
   "id": "the_usual",
@@ -2149,16 +2145,15 @@
   "id": "jetlag",
   "name": "Jet Lag",
   "group": "Route & Travel Milestones",
-  "description": "Run in another time zone when it’s the middle of the night at home.",
+  "description": "Run in another time zone when it’s between midnight and 5 AM at home.",
   "levels": [],
-  "first_cut": false,
-  "later": "personal settings"
+  "first_cut": true
  },
  {
   "id": "travel_training",
   "name": "Training on Tour",
   "group": "Route & Travel Milestones",
-  "description": "Complete planned workouts while traveling.",
+  "description": "Complete planned workouts 100 miles or more from home.",
   "levels": [
    1,
    3,
@@ -2166,7 +2161,6 @@
    10,
    25
   ],
-  "first_cut": false,
-  "later": "personal settings"
+  "first_cut": true
  }
 ]

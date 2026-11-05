@@ -18,6 +18,7 @@ import os
 import re
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 import numpy as np
 
@@ -26,11 +27,14 @@ from smoothrun import mirror
 MILE = 1609.344
 FT = 0.3048
 FACTS_VERSION = 4
-RESULT_VERSION = 3
+RESULT_VERSION = 4
 CATALOG = os.environ.get("ACH_CATALOG",
                          os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                       "achievements", "catalog.json"))
 ACH_SINCE = os.environ.get("ACH_SINCE", mirror.SYNC_SINCE)
+# Mile Marker's data folder, mounted read-only: settings.json (birthday, home) and plans/*.json.
+MM_DATA = os.environ.get("MM_DATA", "/data/mile_marker")
+TRAVEL_MILES = 100
 
 
 # ---------------------------------------------------------------- astronomy (approximate)
@@ -578,6 +582,145 @@ def _consecutive_window(sp, n, ok):
     return any(ok(sp[i:i + n]) for i in range(len(sp) - n + 1))
 
 
+# ---------------------------------------------------------------- personal settings
+
+# Filled by compute() from Mile Marker's settings and plans before the rules run.
+CTX = {"birthday": None, "home_tz": None, "home": None, "home_place": None, "places": [], "planned": {}, "first": None}
+
+
+def _mm_files():
+    out = [os.path.join(MM_DATA, "settings.json")]
+    try:
+        out += [os.path.join(MM_DATA, "plans", n) for n in os.listdir(os.path.join(MM_DATA, "plans")) if n.endswith(".json")]
+    except OSError:
+        pass
+    return out
+
+
+def _mm_mtime():
+    """Latest change to Mile Marker's settings or plans (a deleted plan changes the folder)."""
+    times = []
+    for f in _mm_files() + [os.path.join(MM_DATA, "plans")]:
+        try:
+            times.append(os.path.getmtime(f))
+        except OSError:
+            pass
+    return max(times, default=0)
+
+
+def _read_json(path):
+    try:
+        with open(path) as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return None
+
+
+def place_of(r):
+    return ", ".join(x for x in (r.get("city"), r.get("state")) if x) or None
+
+
+def _home_point(runs, place):
+    """(place, point): the middle of the starts in your home place. Without one set, or if it
+    isn't among your runs, the place you run from most."""
+    starts = [r for r in runs if r.get("start_ll") and place_of(r)]
+    if not starts:
+        return None, None
+    if not place or not any(place_of(r) == place for r in starts):
+        place = Counter(place_of(r) for r in starts).most_common(1)[0][0]
+    pts = np.array([r["start_ll"] for r in starts if place_of(r) == place])
+    return place, [float(np.median(pts[:, 0])), float(np.median(pts[:, 1]))]
+
+
+def load_context(runs):
+    """Settings and planned workouts from Mile Marker, plus the derived home point."""
+    st = _read_json(os.path.join(MM_DATA, "settings.json")) or {}
+    bd = st.get("birthday")
+    bd = bd if isinstance(bd, str) and re.fullmatch(r"(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])", bd) else None
+    tz = None
+    if isinstance(st.get("home_tz"), str):
+        try:
+            tz = ZoneInfo(st["home_tz"])
+        except Exception:
+            tz = None
+    planned = defaultdict(int)   # date -> planned workouts marked done that day
+    for f in _mm_files()[1:]:
+        p = _read_json(f)
+        if not isinstance(p, dict) or p.get("is_sample") or not isinstance(p.get("workouts"), dict):
+            continue
+        for w in p["workouts"].values():
+            if (isinstance(w, dict) and w.get("plan_week") is not None and w.get("status") == "done"
+                    and not w.get("deleted") and w.get("type") != "rest" and isinstance(w.get("scheduled_date"), str)):
+                planned[w["scheduled_date"]] += 1
+    runs = sorted(runs, key=lambda r: r["start"])
+    home_place, home = _home_point(runs, st.get("home_place"))
+    CTX.update(birthday=bd, home_tz=tz, home=home, home_place=home_place, planned=dict(planned),
+               first=runs[0]["date"] if runs else None,
+               places=[{"place": k, "runs": n} for k, n in Counter(place_of(r) for r in runs if r.get("start_ll") and place_of(r)).most_common()])
+    return CTX
+
+
+def _on_day(year, mmdd):
+    """That month and day in a year; Feb 29 falls back to Feb 28 outside leap years."""
+    m, d = int(mmdd[:2]), int(mmdd[3:])
+    while True:
+        try:
+            return date(year, m, d)
+        except ValueError:
+            d -= 1
+
+
+def _half_birthday(year):
+    m, d = int(CTX["birthday"][:2]), int(CTX["birthday"][3:])
+    m = (m + 5) % 12 + 1
+    return _on_day(year, "%02d-%02d" % (m, d))
+
+
+def _birthday_years(rs):
+    return len({_d(r["date"]).year for r in rs if _d(r["date"]) == _on_day(_d(r["date"]).year, CTX["birthday"])})
+
+
+def _birthday_week(rs):
+    """Most days run in any one birthday week: the birthday and 3 days either side."""
+    best = Counter()
+    for r in rs:
+        d = _d(r["date"])
+        for y in (d.year - 1, d.year, d.year + 1):
+            if abs((d - _on_day(y, CTX["birthday"])).days) <= 3:
+                best[(y, d)] = 1
+    per_year = Counter(y for y, _ in best)
+    return max(per_year.values(), default=0)
+
+
+def _anniversaries(rs):
+    first = _d(CTX["first"])
+    return len({_d(r["date"]).year for r in rs
+                if _d(r["date"]).year > first.year and _d(r["date"]) == _on_day(_d(r["date"]).year, CTX["first"][5:])})
+
+
+def _away(r):
+    h = CTX["home"]
+    return bool(h and r.get("start_ll")) and float(_haversine(h[0], h[1], *r["start_ll"])) >= TRAVEL_MILES * MILE
+
+
+def _training_on_tour(rs):
+    return sum(CTX["planned"].get(day, 0) for day in {r["date"] for r in rs if _away(r)})
+
+
+def _jet_lag(r):
+    """In a different time zone from home, and between midnight and 5 AM at home when you start."""
+    start = _dt(r["utc"])
+    home = start.astimezone(CTX["home_tz"])
+    return home.utcoffset().total_seconds() / 60 != r["offset_min"] and home.hour < 5
+
+
+def NEEDS(rule, *keys):
+    """A rule that can't be worked out until these settings exist; the page says which."""
+    words = {"birthday": "Add your birthday in Settings.", "home_tz": "Set your home time zone in Settings.",
+             "home": "Needs runs with GPS to find home.", "first": "Needs a run first."}
+    return {**rule, "needs": lambda: next((words[k] for k in keys if not CTX.get(k)), None)}
+
+
 # ---------------------------------------------------------------- the rules
 
 def RUN(test, unit="runs"):
@@ -716,6 +859,13 @@ R.update({
     "out_and_back": RUN(lambda r: (r.get("out_back") or 0) >= 0.7),
     # Levels are a count of bands (the catalog lists the bands themselves: 3 to 26 miles).
     "distance_band_firsts": {**HIST(_bands, "distances"), "levels": list(range(1, 25))},
+    # Personal dates and travel (Mile Marker's Settings page and plans)
+    "birthday_suit": NEEDS(HIST(_birthday_years, "birthdays"), "birthday"),
+    "birthday_week": NEEDS(HIST(_birthday_week, "days"), "birthday"),
+    "half_birthday": NEEDS(RUN(lambda r: _d(r["date"]) == _half_birthday(_d(r["date"]).year)), "birthday"),
+    "anniversary_run": NEEDS(HIST(_anniversaries, "years"), "first"),
+    "jetlag": NEEDS(RUN(_jet_lag), "home_tz"),
+    "travel_training": NEEDS(HIST(_training_on_tour, "workouts"), "home"),
 })
 for aid, mins in (("mile_sub_12", 12), ("mile_sub_10", 10), ("mile_sub_9", 9), ("mile_sub_8", 8), ("mile_sub_7", 7),
                   ("mile_sub_6", 6)):
@@ -810,7 +960,10 @@ def evaluate(catalog, runs):
             continue
         levels = _levels(entry, rule)
         earned = []
-        if rule["kind"] == "run":
+        missing = rule["needs"]() if "needs" in rule else None
+        if missing:
+            value = None
+        elif rule["kind"] == "run":
             hits = [r for r in runs if rule["test"](r)]
             for lv in levels:
                 if len(hits) >= lv:
@@ -835,7 +988,8 @@ def evaluate(catalog, runs):
         series, step = series_of(entry["id"])
         out.append({"id": entry["id"], "series": series, "series_step": step, "first": levels[0],
                     "earned": earned, "levels": levels if len(levels) > 1 else [],
-                    "value": value, "next": nxt, "unit": rule["unit"], "lower": rule.get("lower", False)})
+                    "value": value, "next": nxt, "unit": rule["unit"], "lower": rule.get("lower", False),
+                    "needs": missing})
     return out
 
 
@@ -850,7 +1004,9 @@ def compute(root=None):
     rows = [r for r in index["runs"] if not r.get("removed") and (r.get("date") or "") >= ACH_SINCE
             and r.get("distance_m", 0) > 0 and (r.get("type") or "running") == "running"]
     catalog = load_catalog()
-    results = evaluate(catalog, load_facts(rows, root))
+    runs = load_facts(rows, root)
+    load_context(runs)
+    results = evaluate(catalog, runs)
     by_id = {e["id"]: e for e in catalog}
     for r in results:
         e = by_id[r["id"]]
@@ -858,6 +1014,8 @@ def compute(root=None):
     doc = {"version": RESULT_VERSION, "facts_version": FACTS_VERSION, "since": ACH_SINCE,
            "computed_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "synced_at": index.get("synced_at"), "runs": len(rows),
+           # For Mile Marker's Settings page: where you run, and which counts as home.
+           "places": CTX["places"], "home_place": CTX["home_place"], "anniversary": CTX["first"],
            "later": [{"id": e["id"], "name": e["name"], "group": e["group"], "description": e["description"],
                       "needs": e.get("later")} for e in catalog if not e.get("first_cut")],
            "achievements": results}
@@ -876,7 +1034,7 @@ def load(root=None):
     index = mirror.load(root)
     if (not doc or doc.get("version") != RESULT_VERSION or doc.get("facts_version") != FACTS_VERSION
             or doc.get("synced_at") != index.get("synced_at")
-            or os.path.getmtime(CATALOG) > os.path.getmtime(path)):
+            or os.path.getmtime(CATALOG) > os.path.getmtime(path) or _mm_mtime() > os.path.getmtime(path)):
         doc = compute(root)
     return doc
 

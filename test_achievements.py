@@ -140,4 +140,43 @@ assert [A.series_of(i) for i in ("weekly_3x_6weeks", "weekly_3x_3months")] == [(
 five = [run(w * 7 + k, (date(2026, 2, 2) + timedelta(days=w * 7 + k)).isoformat() + "T07:00") for w in range(5) for k in range(5)]
 assert not results(five[:20])["weekly_5x_5weeks"]["earned"] and results(five)["weekly_5x_5weeks"]["earned"]
 
+# --- personal dates and travel, from Mile Marker's settings and plans
+import json, tempfile  # noqa: E401,E402
+mm = tempfile.mkdtemp()
+os.makedirs(os.path.join(mm, "plans"))
+A.MM_DATA = mm
+nyc, boston = [40.80, -73.95], [42.36, -71.06]
+rs = [run(1, "2026-03-10T07:00", start_ll=nyc), run(2, "2026-03-12T07:00", start_ll=nyc),
+      run(3, "2026-03-14T07:00", start_ll=nyc), run(4, "2026-09-14T07:00", start_ll=nyc),
+      run(5, "2026-10-02T07:00", start_ll=boston, city="Boston", state="Massachusetts"),
+      run(6, "2027-03-10T07:00", start_ll=nyc), run(7, "2027-03-12T07:00", start_ll=nyc)]
+A.load_context(rs)
+res = results(rs)
+assert res["birthday_suit"]["needs"] == "Add your birthday in Settings." and not res["birthday_suit"]["earned"]
+assert res["jetlag"]["needs"] and res["anniversary_run"]["needs"] is None
+assert earned(res, "anniversary_run") == [(1, "2027-03-10", 6)]          # first run: 2026-03-10
+with open(os.path.join(mm, "settings.json"), "w") as fh:
+    json.dump({"birthday": "03-12", "home_tz": "America/New_York"}, fh)
+plan = {"workouts": {"a": {"plan_week": 3, "status": "done", "type": "easy", "scheduled_date": "2026-10-02"},
+                     "b": {"plan_week": 3, "status": "done", "type": "rest", "scheduled_date": "2026-10-02"},
+                     "c": {"plan_week": 1, "status": "done", "type": "easy", "scheduled_date": "2026-03-12"}}}
+with open(os.path.join(mm, "plans", "plan-x.json"), "w") as fh:
+    json.dump(plan, fh)
+A.load_context(rs)
+assert A.CTX["home"] == nyc                                                # most runs start in New York
+res = results(rs)
+assert earned(res, "birthday_suit") == [(1, "2026-03-12", 2), (2, "2027-03-12", 7)]
+assert earned(res, "birthday_week") == [(3, "2026-03-14", 3)] and res["birthday_week"]["value"] == 3   # 9th to 15th
+assert not res["half_birthday"]["earned"]                                 # Sep 12; the run was the 14th
+assert earned(res, "travel_training") == [(1, "2026-10-02", 5)]          # Boston is 190 mi away; rest days don't count
+assert A._half_birthday(2026) == date(2026, 9, 12)
+A.CTX["birthday"] = "08-31"
+assert A._half_birthday(2027) == date(2027, 2, 28) and A._on_day(2027, "02-29") == date(2027, 2, 28)
+# Jet lag: 9 AM in Paris (UTC+1) is 3 AM in New York
+paris = run(8, "2026-11-20T09:00", offset_min=60, utc="2026-11-20T08:00:00+00:00")
+half = run(9, "2026-09-12T07:00", start_ll=nyc)
+A.load_context(rs + [half, paris])
+assert earned(results(rs + [half]), "half_birthday") == [(1, "2026-09-12", 9)]
+assert results(rs + [paris])["jetlag"]["earned"] and not results(rs)["jetlag"]["earned"]
+
 print("all achievement tests passed")
