@@ -1415,15 +1415,14 @@
   "id": "borough_hopper",
   "name": "Borough Hopper",
   "group": "Random & Quirky",
-  "description": "Run in more than one NYC borough.",
+  "description": "Run in different NYC boroughs.",
   "levels": [
    2,
    3,
    4,
    5
   ],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "state_lines",
@@ -1685,19 +1684,17 @@
   "id": "petal_pusher",
   "name": "Petal Pusher",
   "group": "Place, Seasonal & Life",
-  "description": "Run in Central Park during cherry blossom season.",
+  "description": "Run half a mile or more in Central Park during cherry blossom season, March 25 to April 30.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "fall_ing_for_it",
   "name": "Fall-ing for It",
   "group": "Place, Seasonal & Life",
-  "description": "Run in Central Park while the leaves are turning.",
+  "description": "Run half a mile or more in Central Park while the leaves turn, October 15 to November 20.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "turkey_trot",
@@ -1746,7 +1743,7 @@
   "id": "bridge_troll",
   "name": "Bridge Troll",
   "group": "Place, Seasonal & Life",
-  "description": "Run across a New York bridge.",
+  "description": "Run across New York bridges, end to end. Each level is another bridge.",
   "levels": [
    1,
    2,
@@ -1754,8 +1751,7 @@
    5,
    10
   ],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "borough_call",
@@ -1763,8 +1759,7 @@
   "group": "Place, Seasonal & Life",
   "description": "Run in all five boroughs in one year.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "reservoir_dogs",
@@ -1772,8 +1767,7 @@
   "group": "Place, Seasonal & Life",
   "description": "Run a full loop of the Central Park Reservoir.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "the_long_loop",
@@ -1781,31 +1775,28 @@
   "group": "Place, Seasonal & Life",
   "description": "Run a full loop of Central Park.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "concrete_jungle",
   "name": "Concrete Jungle",
   "group": "Place, Seasonal & Life",
-  "description": "Run in Manhattan, Brooklyn and Queens in one week.",
+  "description": "Run in Manhattan, Brooklyn and Queens in one week, Monday to Sunday.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "waterfront_property",
   "name": "Waterfront Property",
   "group": "Place, Seasonal & Life",
-  "description": "Run a mile along the New York waterfront.",
+  "description": "Run a mile in a row within 150 meters of the water in New York.",
   "levels": [
    1,
    5,
    10,
    25
   ],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "tourist_season",
@@ -1813,17 +1804,15 @@
   "group": "Place, Seasonal & Life",
   "description": "Run through Times Square.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "the_great_escape",
   "name": "The Great Escape",
   "group": "Place, Seasonal & Life",
-  "description": "Run from Manhattan into another borough.",
+  "description": "Start a run in Manhattan and run into another borough.",
   "levels": [],
-  "first_cut": false,
-  "later": "map shapes"
+  "first_cut": true
  },
  {
   "id": "first_day_summer",

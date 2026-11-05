@@ -155,7 +155,14 @@ stats and plots on it, kept separate from the plan and Smooth features.
     miles from its median start. Anniversary = first run since ACH_SINCE. Training on Tour counts
     plan workouts marked Done on a travel day. Jet Lag = other UTC offset and 11 PM–6 AM at home.
     Results are recomputed when settings or plans change; unset settings show "needs".
-  Later: earlier PRs, NYC map shapes, detailed weather, race names.
+  - NYC places (2026-11-05): `smoothrun/places.py` adds a `places` fact per run. Borough outlines
+    (shoreline-clipped, NYC Open Data gthc-hcne) plus Westchester/Nassau are in
+    `achievements/places.json` (rebuild with `achievements/build_places.py`); outside all of them
+    is water, so waterfront = open water within 150 m for a mile in a row. Bridges (named, 300 m+)
+    and the Reservoir running track come from the mapstore; a crossing must reach both ends.
+    Central Park and Times Square are fixed shapes; the full loop must wind round the park and
+    reach both ends. Seasons: blossoms Mar 25–Apr 30, leaves Oct 15–Nov 20. `python test_places.py`.
+  Later: earlier PRs, detailed weather, race names.
 - **Later:** calendar heatmap, backlog sync (also needed for PRs).
 
 ## Original plan: the web app on the home server

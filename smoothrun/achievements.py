@@ -22,11 +22,11 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
-from smoothrun import mirror
+from smoothrun import mirror, places
 
 MILE = 1609.344
 FT = 0.3048
-FACTS_VERSION = 4
+FACTS_VERSION = 5
 RESULT_VERSION = 4
 CATALOG = os.environ.get("ACH_CATALOG",
                          os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -254,6 +254,7 @@ def facts(a):
         rise, sett = sun_times(local.date(), float(la[0]), float(lo[0]), offset)
         f["sunrise"] = rise.isoformat() if rise else None
         f["sunset"] = sett.isoformat() if sett else None
+        f["places"] = places.places(s["lat"], s["lon"], s["d"])
     return f
 
 
@@ -714,6 +715,23 @@ def _jet_lag(r):
     return home.utcoffset().total_seconds() / 60 != r["offset_min"] and (home.hour >= 23 or home.hour < 6)
 
 
+def _pl(r, key, default=None):
+    return (r.get("places") or {}).get(key, default)
+
+
+def _in_season(r, start, end):
+    """Month-day within [start, end], both "MM-DD"."""
+    return start <= r["date"][5:] <= end
+
+
+def _boroughs_by(rs, key):
+    """Most boroughs run in within one period (key gives the period of a date)."""
+    seen = defaultdict(set)
+    for r in rs:
+        seen[key(_d(r["date"]))].update(_pl(r, "boroughs", []))
+    return seen
+
+
 def NEEDS(rule, *keys):
     """A rule that can't be worked out until these settings exist; the page says which."""
     words = {"birthday": "Add your birthday in Settings.", "home_tz": "Set your home time zone in Settings.",
@@ -859,6 +877,20 @@ R.update({
     "out_and_back": RUN(lambda r: (r.get("out_back") or 0) >= 0.7),
     # Levels are a count of bands (the catalog lists the bands themselves: 3 to 26 miles).
     "distance_band_firsts": {**HIST(_bands, "distances"), "levels": list(range(1, 25))},
+    # New York places (smoothrun/places.py)
+    "borough_hopper": HIST(lambda rs: len({b for r in rs for b in _pl(r, "boroughs", [])}), "boroughs"),
+    "borough_call": HIST(lambda rs: max((len(v) for v in _boroughs_by(rs, lambda d: d.year).values()), default=0), "boroughs"),
+    "concrete_jungle": HIST(lambda rs: max((len(v & {"Manhattan", "Brooklyn", "Queens"})
+                                            for v in _boroughs_by(rs, _mon).values()), default=0), "boroughs"),
+    "the_great_escape": RUN(lambda r: _pl(r, "start_borough") == "Manhattan"
+                            and any(b != "Manhattan" for b in _pl(r, "boroughs", []))),
+    "bridge_troll": HIST(lambda rs: len({b for r in rs for b in _pl(r, "bridges", [])}), "bridges"),
+    "petal_pusher": RUN(lambda r: _pl(r, "central_park_m", 0) >= 800 and _in_season(r, "03-25", "04-30")),
+    "fall_ing_for_it": RUN(lambda r: _pl(r, "central_park_m", 0) >= 800 and _in_season(r, "10-15", "11-20")),
+    "reservoir_dogs": RUN(lambda r: bool(_pl(r, "reservoir_loop"))),
+    "the_long_loop": RUN(lambda r: bool(_pl(r, "cp_loop"))),
+    "waterfront_property": RUN(lambda r: _pl(r, "waterfront_m", 0) >= MILE),
+    "tourist_season": RUN(lambda r: bool(_pl(r, "times_square"))),
     # Personal dates and travel (Mile Marker's Settings page and plans)
     "birthday_suit": NEEDS(HIST(_birthday_years, "birthdays"), "birthday"),
     "birthday_week": NEEDS(HIST(_birthday_week, "days"), "birthday"),
@@ -893,7 +925,7 @@ TARGETS = {
     "monthly_20_days": 20, "negative_split_three": 3, "four_seasons": 4, "weather_or_not": 3, "dog_days": 7,
     "the_commitment": 1, "no_days_off": 1, "the_usual": 1, "hill_climber": 1000, "vertical_mile": 5280,
     "mountain_goat": 5000, "stairway_to_heaven": 10000, "what_goes_up": 500, "race_day": 1, "triple_crown": 3,
-    "double_header": 2,
+    "double_header": 2, "borough_call": 5, "concrete_jungle": 3,
 }
 
 

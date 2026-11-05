@@ -183,4 +183,27 @@ late = run(10, "2026-11-20T05:30", offset_min=60, utc="2026-11-20T04:30:00+00:00
 day = run(11, "2026-11-20T13:00", offset_min=60, utc="2026-11-20T12:00:00+00:00")
 assert A._jet_lag(late) and not A._jet_lag(day)
 
+# --- New York places, from the places facts
+def pl(**kw):
+    base = {"boroughs": ["Manhattan"], "start_borough": "Manhattan", "waterfront_m": 0, "central_park_m": 0,
+            "cp_loop": False, "reservoir_loop": False, "times_square": False, "bridges": []}
+    return {**base, **kw}
+
+
+rs = [run(1, "2026-04-06T07:00", places=pl(central_park_m=3000)),                       # Mon
+      run(2, "2026-04-08T07:00", places=pl(boroughs=["Brooklyn", "Manhattan"], bridges=["Brooklyn Bridge"])),
+      run(3, "2026-04-12T07:00", places=pl(boroughs=["Queens"], start_borough="Queens", waterfront_m=2000)),
+      run(4, "2026-04-13T07:00", places=pl(boroughs=["Bronx", "Manhattan"], bridges=["Brooklyn Bridge", "Madison Avenue Bridge"])),
+      run(5, "2026-10-20T07:00", places=pl(central_park_m=500, cp_loop=True, times_square=True)),
+      run(6, "2026-10-21T07:00")]                                                          # no GPS
+res = results(rs)
+assert earned(res, "concrete_jungle") == [(3, "2026-04-12", 3)]                          # Apr 6-12 week
+assert earned(res, "borough_hopper") == [(2, "2026-04-08", 2), (3, "2026-04-12", 3), (4, "2026-04-13", 4)]
+assert res["borough_call"]["value"] == 4 and not res["borough_call"]["earned"]
+assert earned(res, "bridge_troll") == [(1, "2026-04-08", 2), (2, "2026-04-13", 4)]       # distinct bridges
+assert earned(res, "the_great_escape") == [(1, "2026-04-08", 2)]
+assert earned(res, "petal_pusher") == [(1, "2026-04-06", 1)] and not res["fall_ing_for_it"]["earned"]  # 500 m is too little
+assert earned(res, "waterfront_property") == [(1, "2026-04-12", 3)]
+assert earned(res, "the_long_loop") == [(1, "2026-10-20", 5)] and earned(res, "tourist_season") == [(1, "2026-10-20", 5)]
+
 print("all achievement tests passed")
