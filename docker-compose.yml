@@ -11,6 +11,7 @@ services:
     volumes:
       - ./cache:/data/cache          # mapstore.sqlite and the Overpass tile cache
       - ./backups:/data/backups      # untouched originals of every run fetched
+      - ./mirror:/data/mirror        # local copy of your runs for Mile Marker's stats
       # smashrun_token, plus smooth_passphrase to allow replacing runs. Read on each request.
       - type: bind
         source: ${SMOOTH_SECRETS_DIR:-${HOME}/.config/mile_marker}
@@ -24,6 +25,9 @@ services:
         target: /run/secrets/mile_marker/smashrun_token
         bind:
           create_host_path: false
+    environment:
+      # First date the run copy syncs from. Earlier runs stay on Smashrun only.
+      SYNC_SINCE: ${SYNC_SINCE:-2026-01-01}
     networks: [mile-marker]
 
 networks:

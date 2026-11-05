@@ -14,6 +14,13 @@ numbers and plots; it never changes Smashrun. Replace and restore do, and need t
     GET  /jobs/<id>/pace.png, /jobs/<id>/map.png
     GET  /healthz
 
+The local copy of your runs (smoothrun/mirror.py), for Mile Marker's stats. Sync only reads
+from Smashrun:
+    POST /runs/sync        {} -> 202 the sync job (the one already queued or running, if any)
+    GET  /runs/sync        the latest sync job, or {"status": "never"}
+    GET  /runs             the index: one summary row per run, newest first
+    GET  /runs/<id>        the run's full Smashrun activity JSON, as saved
+
 Jobs, writes included, run one at a time on a background thread (the pipeline takes ~1 s with
 the local map, but the Overpass fallback can take minutes). Only recent jobs are kept, in memory.
 Writes are refused without a passphrase file on the server.
@@ -37,7 +44,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from smoothrun import pipeline, report
+from smoothrun import mirror, pipeline, report
 from smoothrun import smashrun as S
 
 HOST = os.environ.get("HOST", "127.0.0.1")
@@ -220,8 +227,13 @@ def restore(job):
             "validations": info.get("validations") or {}}
 
 
+def sync_runs(job):
+    """Update the local copy of your runs from Smashrun."""
+    return mirror.sync(S.Client(TOKEN_FILE), step=lambda s: job.__setitem__("step", s), log=log)
+
+
 RUNNERS = {"preview": (preview, "Smoothing failed"), "replace": (replace, "The replace failed"),
-           "restore": (restore, "The restore failed")}
+           "restore": (restore, "The restore failed"), "sync": (sync_runs, "The sync failed")}
 
 
 def worker():
@@ -265,6 +277,11 @@ def add_job(kind="preview", **fields):
             shutil.rmtree(os.path.join(OUTPUT_DIR, old_id), ignore_errors=True)
     work.put(job)
     return job
+
+
+def latest_sync():
+    with jobs_lock:
+        return next((j for j in reversed(list(jobs.values())) if j["kind"] == "sync"), None)
 
 
 def public(job):
@@ -336,6 +353,8 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/healthz":
             return self.send_json(200, {"ok": True, "token": os.path.isfile(TOKEN_FILE), "writes": writes_enabled(),
                                         "mapstore": os.path.isfile(os.path.join(CACHE_DIR, "mapstore.sqlite"))})
+        if path == "/runs" or path.startswith("/runs/"):
+            return self.get_runs(path)
         m = re.match(r"^/jobs/([^/]+)(?:/([a-z]+\.png))?$", path)
         if not m or not JOB_ID.match(m.group(1)):
             return self.send_json(404, {"error": "Not found."})
@@ -359,9 +378,30 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def get_runs(self, path):
+        if path == "/runs":
+            return self.send_json(200, mirror.load())
+        if path == "/runs/sync":
+            job = latest_sync()
+            return self.send_json(200, public(job) if job else {"status": "never"})
+        m = re.match(r"^/runs/(\d{1,12})$", path)
+        if not m:
+            return self.send_json(404, {"error": "Not found."})
+        try:
+            with open(os.path.join(mirror.MIRROR_DIR, "activities", "%d.json" % int(m.group(1))), "rb") as f:
+                data = f.read()
+        except FileNotFoundError:
+            return self.send_json(404, {"error": "That run isn't in the local copy. Sync first."})
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
     def do_POST(self):
         path = self.path.split("?")[0]
-        if path not in ("/preview", "/replace", "/restore", "/token"):
+        if path not in ("/preview", "/replace", "/restore", "/token", "/runs/sync"):
             return self.send_json(404, {"error": "Not found."})
         if (self.headers.get("Content-Type") or "").split(";")[0].strip().lower() != "application/json":
             return self.send_json(415, {"error": "Send JSON."})
@@ -380,6 +420,12 @@ class Handler(BaseHTTPRequestHandler):
             return self.post_restore(body)
         if path == "/token":
             return self.post_token(body)
+        if path == "/runs/sync":
+            with jobs_lock:   # one sync at a time; a second tap gets the same job
+                job = latest_sync()
+                if not job or job["status"] not in ("queued", "running"):
+                    job = add_job("sync")
+            return self.send_json(202, public(job))
         link = str(body.get("link") or "").strip()
         latest = body.get("latest") is True
         if latest:

@@ -112,6 +112,22 @@ into the log by hand.
 - Date-style links (`/run/2026/11/3`) are now rejected with a clear message; before, they parsed
   as activity ID 2026. The user will paste ID links.
 
+## In progress: a Smashrun-style stats view (run copy)
+
+Agreed 2026-11-04: Smashrun stays the sync inbox; we keep a local copy of every run and build
+stats and plots on it, kept separate from the plan and Smooth features.
+
+- **Phase 1, done (branch `run-mirror` in both repos):** `smoothrun/mirror.py` and the `/runs`
+  endpoints (see README, "Run copy"). Sync is manual only (a Sync now button; no timer).
+  `SYNC_SINCE=2026-01-01`: the user's comeback runs (4 at first sync). The older backlog is to
+  be copied later. Summaries are rebuilt from the saved files when `SUMMARY_VERSION` changes.
+  Tests against a fake client: `python test_mirror.py`.
+- **Phase 2, next:** a Stats tab in Mile Marker in its own `public/stats.js`: Sync now, this
+  week/month/year totals, weekly distance bars, pace over time, run list.
+- **Phase 3:** one-run page: splits, pace/elevation/cadence vs distance, route as SVG.
+- **Later:** achievements (the user's examples are in `~/RunningAchievements.xlsx`), best efforts
+  inside runs, PRs, calendar heatmap, backlog sync.
+
 ## Original plan: the web app on the home server
 
 The user is moving this work to their home server. It runs Docker services and is reachable only

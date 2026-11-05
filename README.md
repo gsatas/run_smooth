@@ -81,6 +81,26 @@ before deleting it, and can be applied once per preview. Restore works on runs t
 it finds `backups/<old id>_original.json` from the run's `smoothrun-<old id>-...` external ID,
 and saves the smoothed version as `backups/<id>_smoothed_<time>.json` first.
 
+### Run copy (for Mile Marker's stats)
+
+`smoothrun/mirror.py` keeps a local copy of your Smashrun runs in `mirror/`: each run's full
+activity JSON in `mirror/activities/<id>.json`, plus `mirror/index.json` with one summary row per
+run. A sync only reads from Smashrun. It lists runs since `SYNC_SINCE` (default `2026-01-01`, set
+in `docker-compose.yml`), fetches new runs and runs whose `dateUpdatedUTC` changed (a run this
+tool replaced can keep its ID), and marks runs no longer on Smashrun as removed without deleting
+their files. It fetches at most 100 runs per sync, to stay under Smashrun's 250 requests an hour;
+the rest come on the next sync.
+
+```
+mkdir -p mirror                                         # before the first docker compose up
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:3000/api/runs/sync
+python -m smoothrun.mirror sync --since 2026-01-01      # or from the command line
+python -m smoothrun.mirror rebuild                      # recompute index.json from the files
+```
+
+The service serves `GET /runs`, `GET /runs/<id>`, `GET /runs/sync` and `POST /runs/sync`; Mile
+Marker forwards them as `/api/runs/...`.
+
 ## How it works
 
 1. **Smooth** (`smoothrun/smoother.py`): robust least-squares fit of the whole track. It uses a
