@@ -2,7 +2,7 @@
  {
   "id": "total_6",
   "name": "Around Central Park",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 6 miles.",
   "levels": [],
   "first_cut": true
@@ -10,7 +10,7 @@
  {
   "id": "total_13",
   "name": "The Length of Manhattan",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 13 miles.",
   "levels": [],
   "first_cut": true
@@ -18,7 +18,7 @@
  {
   "id": "total_32",
   "name": "Around Manhattan",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 32 miles.",
   "levels": [],
   "first_cut": true
@@ -26,7 +26,7 @@
  {
   "id": "total_52",
   "name": "New York to Princeton",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 52 miles.",
   "levels": [],
   "first_cut": true
@@ -34,7 +34,7 @@
  {
   "id": "total_75",
   "name": "New York to New Haven",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 75 miles.",
   "levels": [],
   "first_cut": true
@@ -42,7 +42,7 @@
  {
   "id": "total_95",
   "name": "New York to Philadelphia",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 95 miles.",
   "levels": [],
   "first_cut": true
@@ -50,7 +50,7 @@
  {
   "id": "total_124",
   "name": "New York to Hartford",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 124 miles.",
   "levels": [],
   "first_cut": true
@@ -58,7 +58,7 @@
  {
   "id": "total_150",
   "name": "New York to Albany",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 150 miles.",
   "levels": [],
   "first_cut": true
@@ -66,7 +66,7 @@
  {
   "id": "total_180",
   "name": "New York to Providence",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 180 miles.",
   "levels": [],
   "first_cut": true
@@ -74,7 +74,7 @@
  {
   "id": "total_225",
   "name": "New York to Boston",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 225 miles.",
   "levels": [],
   "first_cut": true
@@ -82,7 +82,7 @@
  {
   "id": "total_250",
   "name": "New York to Syracuse",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 250 miles.",
   "levels": [],
   "first_cut": true
@@ -90,7 +90,7 @@
  {
   "id": "total_372",
   "name": "New York to Montreal",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 372 miles.",
   "levels": [],
   "first_cut": true
@@ -98,7 +98,7 @@
  {
   "id": "total_398_pittsburgh",
   "name": "New York to Pittsburgh",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 398 miles.",
   "levels": [],
   "first_cut": true
@@ -106,7 +106,7 @@
  {
   "id": "total_462",
   "name": "New York to Cleveland",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 462 miles.",
   "levels": [],
   "first_cut": true
@@ -114,7 +114,7 @@
  {
   "id": "total_545_columbus",
   "name": "New York to Columbus",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 545 miles.",
   "levels": [],
   "first_cut": true
@@ -122,7 +122,7 @@
  {
   "id": "total_634",
   "name": "New York to Charlotte",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 634 miles.",
   "levels": [],
   "first_cut": true
@@ -130,7 +130,7 @@
  {
   "id": "total_727",
   "name": "New York to Indianapolis",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 727 miles.",
   "levels": [],
   "first_cut": true
@@ -138,7 +138,7 @@
  {
   "id": "total_766_charleston",
   "name": "New York to Charleston",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 766 miles.",
   "levels": [],
   "first_cut": true
@@ -146,7 +146,7 @@
  {
   "id": "total_873",
   "name": "New York to Atlanta",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 873 miles.",
   "levels": [],
   "first_cut": true
@@ -154,7 +154,7 @@
  {
   "id": "total_903",
   "name": "New York to Nashville",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 903 miles.",
   "levels": [],
   "first_cut": true
@@ -162,7 +162,7 @@
  {
   "id": "total_939",
   "name": "New York to Jacksonville",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 939 miles.",
   "levels": [],
   "first_cut": true
@@ -170,7 +170,7 @@
  {
   "id": "total_963",
   "name": "New York to St. Louis",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 963 miles.",
   "levels": [],
   "first_cut": true
@@ -178,7 +178,7 @@
  {
   "id": "total_1090_orlando",
   "name": "New York to Orlando",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,090 miles.",
   "levels": [],
   "first_cut": true
@@ -186,7 +186,7 @@
  {
   "id": "total_1146_tampa",
   "name": "New York to Tampa",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,146 miles.",
   "levels": [],
   "first_cut": true
@@ -194,7 +194,7 @@
  {
   "id": "total_1188",
   "name": "New York to Sarasota",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,188 miles.",
   "levels": [],
   "first_cut": true
@@ -202,7 +202,7 @@
  {
   "id": "total_1304_new_orleans",
   "name": "New York to New Orleans",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,304 miles.",
   "levels": [],
   "first_cut": true
@@ -210,7 +210,7 @@
  {
   "id": "total_1450",
   "name": "New York to Key West",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,450 miles.",
   "levels": [],
   "first_cut": true
@@ -218,7 +218,7 @@
  {
   "id": "total_1528",
   "name": "New York to Las Vegas",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,528 miles.",
   "levels": [],
   "first_cut": true
@@ -226,7 +226,7 @@
  {
   "id": "total_1566",
   "name": "New York to Dallas",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,566 miles.",
   "levels": [],
   "first_cut": true
@@ -234,7 +234,7 @@
  {
   "id": "total_1761",
   "name": "New York to Austin",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,761 miles.",
   "levels": [],
   "first_cut": true
@@ -242,7 +242,7 @@
  {
   "id": "total_1790",
   "name": "New York to Denver",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 1,790 miles.",
   "levels": [],
   "first_cut": true
@@ -250,7 +250,7 @@
  {
   "id": "total_2176",
   "name": "New York to Salt Lake City",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,176 miles.",
   "levels": [],
   "first_cut": true
@@ -258,7 +258,7 @@
  {
   "id": "total_2463_phoenix",
   "name": "New York to Phoenix",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,463 miles.",
   "levels": [],
   "first_cut": true
@@ -266,7 +266,7 @@
  {
   "id": "total_2697",
   "name": "New York to Mexico City",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,697 miles.",
   "levels": [],
   "first_cut": true
@@ -274,7 +274,7 @@
  {
   "id": "total_2759_san_diego",
   "name": "New York to San Diego",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,759 miles.",
   "levels": [],
   "first_cut": true
@@ -282,7 +282,7 @@
  {
   "id": "total_2858",
   "name": "New York to Seattle",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,858 miles.",
   "levels": [],
   "first_cut": true
@@ -290,7 +290,7 @@
  {
   "id": "total_2895_portland",
   "name": "New York to Portland",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,895 miles.",
   "levels": [],
   "first_cut": true
@@ -298,7 +298,7 @@
  {
   "id": "total_2902_san_francisco",
   "name": "New York to San Francisco",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,902 miles.",
   "levels": [],
   "first_cut": true
@@ -306,7 +306,7 @@
  {
   "id": "total_2994",
   "name": "New York to Vancouver",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 2,994 miles.",
   "levels": [],
   "first_cut": true
@@ -314,7 +314,7 @@
  {
   "id": "total_3069",
   "name": "New York to Whistler",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,069 miles.",
   "levels": [],
   "first_cut": true
@@ -322,7 +322,7 @@
  {
   "id": "total_3281",
   "name": "New York to Guatemala City",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,281 miles.",
   "levels": [],
   "first_cut": true
@@ -330,7 +330,7 @@
  {
   "id": "total_3329",
   "name": "New York to Belmopan",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,329 miles.",
   "levels": [],
   "first_cut": true
@@ -338,7 +338,7 @@
  {
   "id": "total_3387",
   "name": "New York to San Salvador",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,387 miles.",
   "levels": [],
   "first_cut": true
@@ -346,7 +346,7 @@
  {
   "id": "total_3525",
   "name": "New York to Tegucigalpa",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,525 miles.",
   "levels": [],
   "first_cut": true
@@ -354,7 +354,7 @@
  {
   "id": "total_3730",
   "name": "New York to Managua",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,730 miles.",
   "levels": [],
   "first_cut": true
@@ -362,7 +362,7 @@
  {
   "id": "total_3817",
   "name": "New York to Juneau",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,817 miles.",
   "levels": [],
   "first_cut": true
@@ -370,7 +370,7 @@
  {
   "id": "total_3988",
   "name": "New York to San Jose",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 3,988 miles.",
   "levels": [],
   "first_cut": true
@@ -378,7 +378,7 @@
  {
   "id": "total_4370",
   "name": "New York to Anchorage",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 4,370 miles.",
   "levels": [],
   "first_cut": true
@@ -386,7 +386,7 @@
  {
   "id": "total_4465",
   "name": "New York to Panama City",
-  "group": "Distance",
+  "group": "Total Distance",
   "description": "Run 4,465 miles.",
   "levels": [],
   "first_cut": true
@@ -394,7 +394,7 @@
  {
   "id": "single_1_6",
   "name": "Reservoir Regular",
-  "group": "Distance",
+  "group": "Single-Run Distance",
   "description": "Run 1.6 miles in one run.",
   "levels": [],
   "first_cut": true
@@ -402,7 +402,7 @@
  {
   "id": "single_3",
   "name": "Bridge to Times Square",
-  "group": "Distance",
+  "group": "Single-Run Distance",
   "description": "Run 3 miles in one run.",
   "levels": [],
   "first_cut": true
@@ -410,7 +410,7 @@
  {
   "id": "single_6",
   "name": "Central Park Circuit",
-  "group": "Distance",
+  "group": "Single-Run Distance",
   "description": "Run 6 miles in one run.",
   "levels": [],
   "first_cut": true
@@ -418,7 +418,7 @@
  {
   "id": "single_10",
   "name": "A Long Manhattan",
-  "group": "Distance",
+  "group": "Single-Run Distance",
   "description": "Run 10 miles in one run.",
   "levels": [],
   "first_cut": true
@@ -426,7 +426,7 @@
  {
   "id": "single_13_1",
   "name": "Woooah You’re Halfway There",
-  "group": "Distance",
+  "group": "Single-Run Distance",
   "description": "Run a half marathon, 13.1 miles, in one run.",
   "levels": [],
   "first_cut": true
@@ -434,7 +434,7 @@
  {
   "id": "single_20",
   "name": "Make It a Venti",
-  "group": "Distance",
+  "group": "Single-Run Distance",
   "description": "Run 20 miles in one run.",
   "levels": [],
   "first_cut": true
@@ -442,7 +442,7 @@
  {
   "id": "single_26_2",
   "name": "Woooah Living on a Prayer",
-  "group": "Distance",
+  "group": "Single-Run Distance",
   "description": "Run a marathon, 26.2 miles, in one run.",
   "levels": [],
   "first_cut": true
