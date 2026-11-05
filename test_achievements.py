@@ -56,7 +56,7 @@ res = results(rs)
 assert earned(res, "streak_3_days") == [(3, "2026-01-07", 2)]
 assert earned(res, "weekday_all_7") == [(7, "2026-01-11", 6)]
 assert earned(res, "all_weekdays_month") == [] and res["all_weekdays_month"]["value"] == 1
-assert res["weekly_5x_4weeks"]["value"] == 1
+assert res["weekly_5x_5weeks"]["value"] == 1
 gap = rs + [run(9, "2026-02-20T07:00")]   # Jan 11 → Feb 20: 39 days without a run
 res = results(gap)
 assert earned(res, "comeback_30days") == [(30, "2026-02-20", 9)] and not res["comeback_90days"]["earned"]
@@ -132,7 +132,12 @@ assert len(f["mile_splits"]) == 2 and abs(sum(f["mile_splits"]) - 2 * MILE / (16
 assert f["out_back"] > 0.9 and f["start_end_m"] < 5 and f["sunrise"].startswith("2026-05-02T05:")
 
 # --- series group the ladders
-assert A.series_of("total_6") == "total" and A.series_of("monthly_20_miles") == "month_miles"
-assert A.series_of("monthly_8_days") == "month_days" and A.series_of("mile_sub_10") == "mile" and A.series_of("pi_day") is None
+assert A.series_of("total_6") == ("total", None) and A.series_of("monthly_20_miles") == ("month_miles", None)
+assert A.series_of("mile_sub_10") == ("mile", None) and A.series_of("pi_day") == (None, None)
+assert [A.series_of(i) for i in ("weekly_3x_6weeks", "weekly_3x_3months")] == [("3x_week", 2), ("3x_week", 3)]
+
+# --- Five-Day Regular needs 5 weeks in a row of 5 runs
+five = [run(w * 7 + k, (date(2026, 2, 2) + timedelta(days=w * 7 + k)).isoformat() + "T07:00") for w in range(5) for k in range(5)]
+assert not results(five[:20])["weekly_5x_5weeks"]["earned"] and results(five)["weekly_5x_5weeks"]["earned"]
 
 print("all achievement tests passed")

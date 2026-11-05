@@ -504,10 +504,10 @@
   "first_cut": true
  },
  {
-  "id": "weekly_5x_4weeks",
+  "id": "weekly_5x_5weeks",
   "name": "Five-Day Regular",
   "group": "Consistency",
-  "description": "Run 5 times a week for 4 weeks in a row.",
+  "description": "Run 5 times a week for 5 weeks in a row.",
   "levels": [],
   "first_cut": true
  },

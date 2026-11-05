@@ -26,7 +26,7 @@ from smoothrun import mirror
 MILE = 1609.344
 FT = 0.3048
 FACTS_VERSION = 4
-RESULT_VERSION = 2
+RESULT_VERSION = 3
 CATALOG = os.environ.get("ACH_CATALOG",
                          os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                       "achievements", "catalog.json"))
@@ -612,7 +612,7 @@ R.update({
     "weekly_3x_3weeks": HIST(lambda rs: _consec_weeks(rs, 3), "weeks"),
     "weekly_3x_6weeks": HIST(lambda rs: _consec_weeks(rs, 3), "weeks"),
     "weekly_4x_4weeks": HIST(lambda rs: _consec_weeks(rs, 4), "weeks"),
-    "weekly_5x_4weeks": HIST(lambda rs: _consec_weeks(rs, 5), "weeks"),
+    "weekly_5x_5weeks": HIST(lambda rs: _consec_weeks(rs, 5), "weeks"),
     "weekly_once_year": HIST(lambda rs: _consec_weeks(rs, 1), "weeks"),
     "weekly_3x_3months": HIST(lambda rs: _consec_months_all_weeks(rs, 3), "months"),
     "weekly_3x_6months": HIST(lambda rs: _consec_months_all_weeks(rs, 3), "months"),
@@ -733,7 +733,7 @@ for n in (10, 15, 20, 25, 30, 35, 40):
 # Thresholds for rules whose catalog entry has no levels: (value needed), by id.
 TARGETS = {
     "streak_3_days": 3, "streak_5_days": 5, "weekday_all_7": 7,
-    "weekly_3x_3weeks": 3, "weekly_3x_6weeks": 6, "weekly_4x_4weeks": 4, "weekly_5x_4weeks": 4, "weekly_once_year": 52,
+    "weekly_3x_3weeks": 3, "weekly_3x_6weeks": 6, "weekly_4x_4weeks": 4, "weekly_5x_5weeks": 5, "weekly_once_year": 52,
     "weekly_3x_3months": 3, "weekly_3x_6months": 6, "monthly_every_weekend": 1,
     "distance_growth_3months": 3, "distance_growth_6months": 6, "monday_5": 5, "friday_5": 5,
     "wednesday_10": 10, "saturday_10": 10, "sunday_10": 10, "all_weekdays_month": 4, "calendar_month_dates_1_31": 31,
@@ -751,8 +751,10 @@ TARGETS = {
 # shows the highest earned and the next to go in each, and hides the rest.
 SERIES = {
     "streak_3_days": "day_streak", "streak_5_days": "day_streak", "weekday_all_7": "day_streak",
-    "weekly_3x_3weeks": "3x_weeks", "weekly_3x_6weeks": "3x_weeks",
-    "weekly_3x_3months": "3x_months", "weekly_3x_6months": "3x_months",
+    # Three times a week: 3 weeks, 6 weeks, 3 months, 6 months (a month in a row is 4-5 weeks).
+    "weekly_3x_3weeks": ("3x_week", 1), "weekly_3x_6weeks": ("3x_week", 2),
+    "weekly_3x_3months": ("3x_week", 3), "weekly_3x_6months": ("3x_week", 4),
+    "weekly_4x_4weeks": ("4x_5x", 1), "weekly_5x_5weeks": ("4x_5x", 2),
     "distance_growth_3months": "growth", "distance_growth_6months": "growth",
     "runs_100": "runs", "runs_500": "runs", "runs_1000": "runs",
     "active_years_3": "years", "active_years_5": "years",
@@ -766,12 +768,15 @@ SERIES = {
 
 
 def series_of(aid):
+    """(series key, position) for an achievement in a series, else (None, None). Without an
+    explicit position, the page orders a series by target."""
     for pattern, key in ((r"total_", "total"), (r"single_", "single"), (r"monthly_\d+_miles", "month_miles"),
                          (r"weekly_\d+_miles", "week_miles"), (r"monthly_\d+_days", "month_days"),
                          (r"mile_sub_", "mile"), (r"5k_sub_", "5k"), (r"10k_sub_", "10k"), (r"half_sub_", "half")):
         if re.match(pattern, aid):
-            return key
-    return SERIES.get(aid)
+            return key, None
+    got = SERIES.get(aid)
+    return got if isinstance(got, tuple) else (got, None)
 
 
 def _total(target):
@@ -827,7 +832,8 @@ def evaluate(catalog, runs):
                         lo = mid + 1
                 earned.append({"at": lv, "date": runs[lo - 1]["date"], "run": runs[lo - 1]["id"]})
         nxt = next((lv for lv in levels if not any(e["at"] == lv for e in earned)), None)
-        out.append({"id": entry["id"], "series": series_of(entry["id"]), "first": levels[0],
+        series, step = series_of(entry["id"])
+        out.append({"id": entry["id"], "series": series, "series_step": step, "first": levels[0],
                     "earned": earned, "levels": levels if len(levels) > 1 else [],
                     "value": value, "next": nxt, "unit": rule["unit"], "lower": rule.get("lower", False)})
     return out
