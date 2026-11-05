@@ -708,10 +708,10 @@ def _training_on_tour(rs):
 
 
 def _jet_lag(r):
-    """In a different time zone from home, and between midnight and 5 AM at home when you start."""
+    """In a different time zone from home, and between 11 PM and 6 AM at home when you start."""
     start = _dt(r["utc"])
     home = start.astimezone(CTX["home_tz"])
-    return home.utcoffset().total_seconds() / 60 != r["offset_min"] and home.hour < 5
+    return home.utcoffset().total_seconds() / 60 != r["offset_min"] and (home.hour >= 23 or home.hour < 6)
 
 
 def NEEDS(rule, *keys):

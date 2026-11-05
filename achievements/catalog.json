@@ -2145,7 +2145,7 @@
   "id": "jetlag",
   "name": "Jet Lag",
   "group": "Route & Travel Milestones",
-  "description": "Run in another time zone when it’s between midnight and 5 AM at home.",
+  "description": "Run in another time zone when it’s between 11 PM and 6 AM at home.",
   "levels": [],
   "first_cut": true
  },

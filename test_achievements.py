@@ -178,5 +178,9 @@ half = run(9, "2026-09-12T07:00", start_ll=nyc)
 A.load_context(rs + [half, paris])
 assert earned(results(rs + [half]), "half_birthday") == [(1, "2026-09-12", 9)]
 assert results(rs + [paris])["jetlag"]["earned"] and not results(rs)["jetlag"]["earned"]
+# 5:30 AM in Paris is 11:30 PM the night before in New York (counts); 1 PM in Paris is 7 AM there (doesn't)
+late = run(10, "2026-11-20T05:30", offset_min=60, utc="2026-11-20T04:30:00+00:00")
+day = run(11, "2026-11-20T13:00", offset_min=60, utc="2026-11-20T12:00:00+00:00")
+assert A._jet_lag(late) and not A._jet_lag(day)
 
 print("all achievement tests passed")

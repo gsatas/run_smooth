@@ -153,7 +153,7 @@ stats and plots on it, kept separate from the plan and Smooth features.
     run_smooth reads it and the plans read-only at `/data/mile_marker` (`MM_DATA`). Home is a place
     from your runs ("City, State"; automatic = the one you run from most); travel = starting 100+
     miles from its median start. Anniversary = first run since ACH_SINCE. Training on Tour counts
-    plan workouts marked Done on a travel day. Jet Lag = other UTC offset and 0–5 AM at home.
+    plan workouts marked Done on a travel day. Jet Lag = other UTC offset and 11 PM–6 AM at home.
     Results are recomputed when settings or plans change; unset settings show "needs".
   Later: earlier PRs, NYC map shapes, detailed weather, race names.
 - **Later:** calendar heatmap, backlog sync (also needed for PRs).
