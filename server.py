@@ -20,6 +20,8 @@ from Smashrun:
     GET  /runs/sync        the latest sync job, or {"status": "never"}
     GET  /runs             the index: one summary row per run, newest first
     GET  /runs/<id>        the run's full Smashrun activity JSON, as saved
+    GET  /achievements     every achievement with what you've earned and your progress
+                           (smoothrun/achievements.py; recomputed after each sync)
 
 Jobs, writes included, run one at a time on a background thread (the pipeline takes ~1 s with
 the local map, but the Overpass fallback can take minutes). Only recent jobs are kept, in memory.
@@ -44,7 +46,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from smoothrun import mirror, pipeline, report
+from smoothrun import achievements, mirror, pipeline, report
 from smoothrun import smashrun as S
 
 HOST = os.environ.get("HOST", "127.0.0.1")
@@ -229,7 +231,13 @@ def restore(job):
 
 def sync_runs(job):
     """Update the local copy of your runs from Smashrun."""
-    return mirror.sync(S.Client(TOKEN_FILE), step=lambda s: job.__setitem__("step", s), log=log)
+    result = mirror.sync(S.Client(TOKEN_FILE), step=lambda s: job.__setitem__("step", s), log=log)
+    job["step"] = "Checking achievements"
+    try:   # a rule bug mustn't fail the sync; the runs are already saved
+        achievements.compute()
+    except Exception:
+        traceback.print_exc()
+    return result
 
 
 RUNNERS = {"preview": (preview, "Smoothing failed"), "replace": (replace, "The replace failed"),
@@ -355,6 +363,12 @@ class Handler(BaseHTTPRequestHandler):
                                         "mapstore": os.path.isfile(os.path.join(CACHE_DIR, "mapstore.sqlite"))})
         if path == "/runs" or path.startswith("/runs/"):
             return self.get_runs(path)
+        if path == "/achievements":
+            try:
+                return self.send_json(200, achievements.load())
+            except Exception:
+                traceback.print_exc()
+                return self.send_json(500, {"error": "The achievements couldn’t be worked out."})
         m = re.match(r"^/jobs/([^/]+)(?:/([a-z]+\.png))?$", path)
         if not m or not JOB_ID.match(m.group(1)):
             return self.send_json(404, {"error": "Not found."})

@@ -5,6 +5,7 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY smoothrun ./smoothrun
+COPY achievements ./achievements
 COPY server.py ./
 ENV PYTHONUNBUFFERED=1 MPLCONFIGDIR=/tmp/matplotlib HOST=0.0.0.0 PORT=8000 \
     TOKEN_FILE=/run/secrets/mile_marker/smashrun_token \

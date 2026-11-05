@@ -134,8 +134,22 @@ stats and plots on it, kept separate from the plan and Smooth features.
   HR are averaged over 200 m; cadence is stored in strides/min and shown as steps/min (×2).
   Route is an SVG line (no map tiles, so the CSP stays closed). One cursor across all charts and
   the route.
-- **Later:** achievements (the user's examples are in `~/RunningAchievements.xlsx`), best efforts
-  inside runs, PRs, calendar heatmap, backlog sync.
+- **Achievements, first cut done:** `achievements/catalog.json` is the source of truth (244
+  entries, tidied from `~/RunningAchievements.xlsx` with the user; `first_cut` marks the 205
+  computed now, `later` says what the rest need). `smoothrun/achievements.py` replays runs since
+  `ACH_SINCE` (= SYNC_SINCE, 2026-01-01) after every sync, writes `mirror/achievements.json` and
+  serves `GET /achievements`; per-run facts are cached in `mirror/facts.json`. Tests:
+  `python test_achievements.py`. User decisions:
+  - Everything counts from 2026 runs only, except distance PRs, which should come from the old
+    runs. PR trophies are left out until the 324 pre-2026 runs are copied.
+  - Accept GPS-inflated best efforts; the user fixes suspicious runs by smoothing them.
+  - Heat Wave dropped; It's Too Damn Hot is a one-off (≥95°F); Dog Days = 7 runs >85°F in one
+    calendar year (any month). Race Day is the first race; Serial Racer starts at 5.
+  - Weather uses Smashrun's single reading per run, often missing for API uploads (3 of the
+    first 4 runs have none). Wind is assumed to be km/h. Sunrise/sunset, moon phases and
+    solstices are computed locally. Best efforts and splits use moving time.
+  Later: earlier PRs, NYC map shapes, birthday/time-zone settings, detailed weather, race names.
+- **Later:** calendar heatmap, backlog sync (also needed for PRs).
 
 ## Original plan: the web app on the home server
 
