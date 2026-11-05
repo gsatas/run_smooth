@@ -28,7 +28,7 @@ MIRROR_DIR = os.environ.get("MIRROR_DIR", "mirror")
 SYNC_SINCE = os.environ.get("SYNC_SINCE", "2026-01-01")
 PAGE = 100
 MAX_FETCH = 100     # detail requests per sync; Smashrun allows 250 requests an hour
-SUMMARY_VERSION = 1
+SUMMARY_VERSION = 2
 ACTIVITY_FILE = re.compile(r"^(\d{1,12})\.json$")
 
 
@@ -83,6 +83,8 @@ def summary(a):
         "has_gps": bool(a.get("hasDetailsGPS")),
         "has_hr": "heartRate" in keys and not a.get("isBadHR"),
         "smoothed": bool(m),
+        # Smoothed in this copy only (Smashrun keeps its version): see keep_local().
+        "smoothed_here": "-local-" in ext,
         "smoothed_from": int(m.group(1)) if m else None,
         "source": a.get("source"),
         "notes": a.get("notes") or "",
@@ -230,6 +232,44 @@ def swap(client, old_id, new_id, root=None, log=print):
     rebuild(root, state={**state, "removed": removed})
     log("mirror: run %d is now %d" % (old_id, new_id))
     return True
+
+
+def original_here(aid, root=None):
+    """The run as it was before keep_local() swapped in a smoothed version, or None."""
+    return _read(_dir("originals", "%d.json" % aid, root=root))
+
+
+def keep_local(aid, smoothed, root=None):
+    """Use a smoothed version of run `aid` in this copy only, for runs Smashrun won't take back.
+    The copy's original is kept in originals/ (the first time only), for undo_local()."""
+    path = _dir("activities", "%d.json" % aid, root=root)
+    current = _read(path)
+    if current is None:
+        raise ValueError("run %d isn't in the copy" % aid)
+    os.makedirs(_dir("originals", root=root), exist_ok=True)
+    if original_here(aid, root) is None:
+        _write_atomic(_dir("originals", "%d.json" % aid, root=root), current)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+    # A new update stamp, so cached per-run facts are worked out again. (A sync would see it differs
+    # from Smashrun's and fetch Smashrun's version back, which is why only runs Smashrun can't take
+    # back, all from before SYNC_SINCE or gone from Smashrun, are smoothed here.)
+    orig = original_here(aid, root) or current
+    new = {**smoothed, "activityId": aid, "externalId": "smoothrun-%d-local-%s" % (aid, stamp),
+           "dateUpdatedUTC": "%s local-%s" % (orig.get("dateUpdatedUTC"), stamp)}
+    _write_atomic(path, new)
+    rebuild(root)
+    return new
+
+
+def undo_local(aid, root=None):
+    """Put back the copy's original of a run smoothed here."""
+    orig = original_here(aid, root)
+    if orig is None:
+        raise ValueError("run %d wasn't smoothed here" % aid)
+    _write_atomic(_dir("activities", "%d.json" % aid, root=root), orig)
+    os.remove(_dir("originals", "%d.json" % aid, root=root))
+    rebuild(root)
+    return orig
 
 
 def import_folder(folder, before=None, root=None, log=print):

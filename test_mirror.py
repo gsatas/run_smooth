@@ -75,4 +75,33 @@ try:
     raise AssertionError("should have refused")
 except S.SmashrunError as e:
     assert "refusing" in str(e) and "ten years" in str(e)
+# keep_local / undo_local: a smoothed version in the copy only, with the original kept for undo
+before = json.load(open(os.path.join(root, "activities", "700.json")))
+mirror.keep_local(700, {**before, "distance": 4.5, "externalId": "x"}, root)
+row = {x["id"]: x for x in mirror.load(root)["runs"]}[700]
+assert row["smoothed_here"] and row["distance_m"] == 4500 and mirror.original_here(700, root)["distance"] == 4.9
+assert row["updated"] != before.get("dateUpdatedUTC")                          # so cached facts are redone
+mirror.keep_local(700, {**before, "distance": 4.4}, root)                     # again: the first original is kept
+assert mirror.original_here(700, root)["distance"] == 4.9
+mirror.undo_local(700, root)
+row = {x["id"]: x for x in mirror.load(root)["runs"]}[700]
+assert not row["smoothed_here"] and row["distance_m"] == 4900 and mirror.original_here(700, root) is None
+
+# a failed replace says what Smashrun really lists afterwards, not just what it answered
+class Liar:
+    """Deletes fine; every upload "fails"; the listing shows whatever `listed` holds."""
+    def __init__(s, listed): s.listed, s.calls = listed, []
+    def _call(s, method, path, body=None):
+        s.calls.append(method)
+        if method == "GET": return s.listed
+        if method == "POST": raise S.SmashrunError("POST /my/activities/ -> HTTP 400: not saved")
+start = "2024-05-01T07:00:00-04:00"
+json.dump({"startDateTimeLocal": start, "activityId": 9}, open(bk, "w"))
+for listed, says in (([{"activityId": 77, "startDateTimeLocal": start}], "lists run 77"),
+                     ([], "nothing is listed at its start time")):
+    try:
+        S.replace(Liar(listed), 9, {"startDateTimeLocal": start}, bk, log=lambda m: None)
+        raise AssertionError("should have failed")
+    except S.SmashrunError as e:
+        assert says in str(e), str(e)
 print("all mirror tests passed")

@@ -183,11 +183,18 @@ stats and plots on it, kept separate from the plan and Smooth features.
 ## Smashrun's ten-year limit (learned the hard way, 2026-11-05)
 
 Smashrun refuses uploads of runs ten years old or more ("Only runs less than ten years old can be
-saved"). Replace deletes first, so run 2201630 (2014-07-12, 9.68 km) was deleted and couldn't be put
-back; it survives only in `backups/2201630_original.json` and the run copy. `smashrun.too_old()` now
-stops a replace or restore before anything is deleted (2 days' margin), and the preview reports
-`blocked` so the Smooth tab hides Replace. Upload-then-delete isn't possible as-is: Smashrun dedupes by
-start time.
+saved"). Replace deletes first, so run 2201630 (2014-07-12, 9.68 km) was deleted and both uploads were
+answered with HTTP 400. Smashrun saved the put-back anyway, as 47391052 (identical to the backup), but
+**that can't be relied on**: treat a too-old run as unrecoverable once deleted. `smashrun.too_old()` stops
+a replace or restore before anything is deleted (2 days' margin), and the preview reports `blocked` so
+the Smooth tab hides Replace. If a put-back still fails, `replace()` checks Smashrun's list at that start
+time and says what's really there. Upload-then-delete isn't possible as-is: Smashrun dedupes by start
+time.
+
+Runs Smashrun can't take back can be smoothed in the run copy only (Smooth tab: "Use the smoothed
+version here"; `POST /keep-local`, `/undo-local`; `mirror.keep_local()` keeps the copy's original in
+`mirror/originals/`). Done for 47391052 (the Jul 12, 2014 run, whose 8:06 mile was GPS error).
+A replace or restore now also updates the run copy straight away (`mirror.swap`), whatever the date.
 
 ## Original plan: the web app on the home server
 

@@ -261,6 +261,24 @@ def delete(client, aid):
     return client._call("DELETE", "/my/activities/%d" % aid)
 
 
+def runs_starting_at(client, start_local, log=print):
+    """IDs of runs Smashrun lists with this exact local start time ([] if none, or on any error)."""
+    try:
+        day = datetime.fromisoformat(start_local).date()
+        since = int(datetime(day.year, day.month, day.day, tzinfo=timezone.utc).timestamp()) - 86400
+        found, page = [], 0
+        while page < 50:
+            rows = client._call("GET", "/my/activities/search?fromDate=%d&count=100&page=%d" % (since, page)) or []
+            found += [int(r["activityId"]) for r in rows if r.get("startDateTimeLocal") == start_local]
+            if len(rows) < 100:
+                break
+            page += 1
+        return found
+    except Exception as e:   # only used to report what happened; must not hide the real error
+        log("couldn't check Smashrun's list of runs: %s" % e)
+        return []
+
+
 def replace(client, old_id, new_activity, backup_path, log=print, external_id=None, info=None):
     """Delete `old_id` and upload `new_activity` in its place. If the upload fails, re-upload
     the activity saved at `backup_path` so the run isn't lost. Returns the new activity id.
@@ -284,9 +302,15 @@ def replace(client, old_id, new_activity, backup_path, log=print, external_id=No
         try:
             post(client, fallback, fallback.get("externalId") or "restore-%d-%s" % (old_id, stamp))
         except Exception as e2:
-            raise SmashrunError("the upload failed (%s) and putting the run back also failed (%s). "
-                                "Run %d is deleted on Smashrun; its saved copy is %s"
-                                % (e, e2, old_id, os.path.basename(backup_path)))
+            # Smashrun's answer can't be trusted here: it once said the put-back failed but saved it.
+            # Look at what's really there, but never count on it.
+            found = runs_starting_at(client, fallback.get("startDateTimeLocal"), log=log)
+            there = ("Smashrun now lists run %s at that start time, so check it on the Smashrun website."
+                     % ", ".join(map(str, found)) if found else
+                     "Run %d is deleted on Smashrun and nothing is listed at its start time." % old_id)
+            raise SmashrunError("the upload failed (%s) and Smashrun said putting the run back failed too "
+                                "(%s). %s The saved copy is %s"
+                                % (e, e2, there, os.path.basename(backup_path)))
         raise SmashrunError("the upload failed, so the run was put back as it was: %s" % e)
     if info is not None and isinstance(resp, dict):
         info["validations"] = resp.get("validations") or {}

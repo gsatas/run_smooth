@@ -122,7 +122,19 @@ def preview(job):
         aid = S.activity_id(job["link"])
     job["activity_id"] = aid
     job["step"] = "Fetching the run from Smashrun"
-    original = client.get(aid)
+    gone = None
+    try:
+        original = client.get(aid)
+    except S.TokenError:
+        raise
+    except S.SmashrunError as e:
+        # Not on Smashrun any more (for example lost to its ten-year limit): smooth the run copy's
+        # version, if there is one, so it can be kept here.
+        original = mirror.original_here(aid) or mirror._read(os.path.join(mirror.MIRROR_DIR, "activities", "%d.json" % aid))
+        if original is None:
+            raise
+        gone = "This run isn't on Smashrun any more (%s), so this is the run copy's version. " \
+               "The smoothed run can only be kept here." % str(e)[:80]
     bpath = S.backup(original, BACKUP_DIR)
     warnings = S.warnings_for(original)
     orig_id = S.original_id_of(original)
@@ -166,7 +178,11 @@ def preview(job):
         "duration_s": float(original.get("duration") or 0),
         "smoothed": orig_id is not None,
         "warnings": warnings,
-        "blocked": S.too_old(original),   # Smashrun wouldn't take it back: no Replace
+        "blocked": gone or S.too_old(original),   # Smashrun wouldn't take it back: no Replace
+        # Such runs can use the smoothed version in the run copy instead (POST /keep-local).
+        "local_ok": bool(gone or S.too_old(original)) and os.path.exists(
+            os.path.join(mirror.MIRROR_DIR, "activities", "%d.json" % aid)),
+        "smoothed_here": mirror.original_here(aid) is not None,
         "backup": os.path.basename(bpath),
         "restorable": restorable,
         "distance": {
@@ -433,7 +449,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if path not in ("/preview", "/replace", "/restore", "/token", "/runs/sync"):
+        if path not in ("/preview", "/replace", "/restore", "/token", "/runs/sync", "/keep-local", "/undo-local"):
             return self.send_json(404, {"error": "Not found."})
         if (self.headers.get("Content-Type") or "").split(";")[0].strip().lower() != "application/json":
             return self.send_json(415, {"error": "Send JSON."})
@@ -448,6 +464,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(400, {"error": "The request body must be a JSON object."})
         if path == "/replace":
             return self.post_replace(body)
+        if path in ("/keep-local", "/undo-local"):
+            return self.post_local(path, body)
         if path == "/restore":
             return self.post_restore(body)
         if path == "/token":
@@ -469,6 +487,33 @@ class Handler(BaseHTTPRequestHandler):
         except S.SmashrunError as e:
             return self.send_json(400, {"error": str(e)})
         return self.send_json(202, public(add_job(link=link)))
+
+    def post_local(self, path, body):
+        """Use a preview's smoothed run in the run copy only (or undo that). Smashrun isn't touched."""
+        try:
+            if path == "/keep-local":
+                with jobs_lock:
+                    p = jobs.get(str(body.get("job") or ""))
+                if not p or p["kind"] != "preview" or p["status"] != "done":
+                    return self.send_json(404, {"error": "That preview has expired. Run it again."})
+                if not p["result"].get("local_ok"):
+                    return self.send_json(409, {"error": "Only runs Smashrun can't take back are smoothed here only."})
+                aid = p["activity_id"]
+                new = mirror.keep_local(aid, p["_new"])
+                log("kept a smoothed version of %d in the run copy" % aid)
+                out = {"action": "local", "activity_id": aid, "distance_m": float(new["distance"]) * 1000.0}
+            else:
+                aid = int(body.get("activity_id"))
+                orig = mirror.undo_local(aid)
+                log("put back the run copy's original of %d" % aid)
+                out = {"action": "unlocal", "activity_id": aid, "distance_m": float(orig.get("distance") or 0) * 1000.0}
+        except (ValueError, TypeError) as e:
+            return self.send_json(400, {"error": str(e)})
+        try:
+            achievements.compute()
+        except Exception:
+            traceback.print_exc()
+        return self.send_json(200, out)
 
     def post_replace(self, body):
         with jobs_lock:
