@@ -46,7 +46,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from smoothrun import achievements, mirror, pipeline, report
+from smoothrun import achievements, mirror, pipeline, report, weather
 from smoothrun import smashrun as S
 
 HOST = os.environ.get("HOST", "127.0.0.1")
@@ -394,7 +394,12 @@ class Handler(BaseHTTPRequestHandler):
 
     def get_runs(self, path):
         if path == "/runs":
-            return self.send_json(200, mirror.load())
+            index = mirror.load()
+            wx = weather.saved()   # Open-Meteo's hours, for runs Smashrun has no weather for
+            for row in index.get("runs", []):
+                if wx.get(str(row["id"])):
+                    row["wx"] = wx[str(row["id"])]
+            return self.send_json(200, index)
         if path == "/runs/sync":
             job = latest_sync()
             return self.send_json(200, public(job) if job else {"status": "never"})

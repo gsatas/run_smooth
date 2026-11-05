@@ -90,3 +90,13 @@ def for_runs(runs, root=None, fetch=_get):
     if changed:
         mirror._write_atomic(path, cache)
     return out
+
+
+def saved(root=None):
+    """{run id (str): summary} for every run looked up so far."""
+    try:
+        with open(os.path.join(root or mirror.MIRROR_DIR, "weather.json")) as fh:
+            cache = json.load(fh)
+    except (FileNotFoundError, ValueError):
+        return {}
+    return cache.get("runs", {}) if cache.get("version") == WEATHER_VERSION else {}
