@@ -1626,8 +1626,7 @@
   "group": "Weather",
   "description": "Run in a thunderstorm.",
   "levels": [],
-  "first_cut": false,
-  "later": "detailed weather"
+  "first_cut": true
  },
  {
   "id": "suns_out",
@@ -1640,17 +1639,15 @@
    10,
    25
   ],
-  "first_cut": false,
-  "later": "detailed weather"
+  "first_cut": true
  },
  {
   "id": "foggy_bottom",
   "name": "Foggy Bottom",
   "group": "Weather",
-  "description": "Run in thick fog.",
+  "description": "Run in fog: visibility of 500 meters or less.",
   "levels": [],
-  "first_cut": false,
-  "later": "detailed weather"
+  "first_cut": true
  },
  {
   "id": "spring_has_sprung",
@@ -2068,10 +2065,9 @@
   "id": "back_for_more",
   "name": "Back for More",
   "group": "Elevation & Race",
-  "description": "Run the same race in two different years.",
+  "description": "Run the same race in a later year.",
   "levels": [],
-  "first_cut": false,
-  "later": "race names"
+  "first_cut": true
  },
  {
   "id": "full_circle",

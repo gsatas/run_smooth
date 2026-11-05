@@ -162,7 +162,12 @@ stats and plots on it, kept separate from the plan and Smooth features.
     and the Reservoir running track come from the mapstore; a crossing must reach both ends.
     Central Park and Times Square are fixed shapes; the full loop must wind round the park and
     reach both ends. Seasons: blossoms Mar 25–Apr 30, leaves Oct 15–Nov 20. `python test_places.py`.
-  Later: earlier PRs, detailed weather, race names.
+  - Weather and races (2026-11-05): `smoothrun/weather.py` fetches each GPS run's hours from
+    Open-Meteo's historical-forecast API (no key; start point rounded to 0.01°) once, into
+    `mirror/weather.json`. Smashrun's reading wins where it has one; Open-Meteo fills gaps and
+    adds thunder (codes 95–99), fog (45/48 or visibility ≤ 500 m) and UV. Back for More: a race
+    again in a later year, same = same first line of notes, or start ≤ 300 m and distance ±5%.
+  Later: earlier PRs (the user will copy the pre-2026 runs over from another machine).
 - **Later:** calendar heatmap, backlog sync (also needed for PRs).
 
 ## Original plan: the web app on the home server

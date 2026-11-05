@@ -22,11 +22,11 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
-from smoothrun import mirror, places
+from smoothrun import mirror, places, weather
 
 MILE = 1609.344
 FT = 0.3048
-FACTS_VERSION = 5
+FACTS_VERSION = 6
 RESULT_VERSION = 4
 CATALOG = os.environ.get("ACH_CATALOG",
                          os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -230,6 +230,7 @@ def facts(a):
         "race": bool(a.get("isRace")), "treadmill": bool(a.get("isTreadmill")),
         "city": a.get("city"), "state": a.get("state"), "country": a.get("country"),
         "country_code": (a.get("countryCode") or "").lower() or None,
+        "notes": (a.get("notes") or "").strip(),
     }
     if s is None:
         return f
@@ -327,17 +328,52 @@ def _night(r):
     return _dt(r["start"]) < _dt(r["sunrise"]) or _dt(r["finish"]) > _dt(r["sunset"])
 
 
+def _wx(r, key):
+    return (r.get("wx") or {}).get(key)
+
+
 def _rain(r):
-    return bool(r.get("weather")) and any(w in r["weather"] for w in ("rain", "drizzle", "shower", "sleet"))
+    return (bool(r.get("weather")) and any(w in r["weather"] for w in ("rain", "drizzle", "shower", "sleet"))
+            or bool(_wx(r, "rain")))
 
 
 def _snow(r):
-    return bool(r.get("weather")) and "snow" in r["weather"]
+    return bool(r.get("weather")) and "snow" in r["weather"] or bool(_wx(r, "snow"))
 
 
 def _perfect(r):
     return (r.get("temp_f") is not None and 55 <= r["temp_f"] <= 65 and r.get("humidity") is not None
-            and r["humidity"] < 70 and r.get("weather") is not None and not _rain(r) and not _snow(r))
+            and r["humidity"] < 70 and (r.get("weather") is not None or r.get("wx") is not None)
+            and not _rain(r) and not _snow(r))
+
+
+def with_weather(r, wx):
+    """A run's facts with Open-Meteo's hours added, filling in what Smashrun didn't record."""
+    if not wx:
+        return r
+    r = dict(r, wx=wx)
+    for k in ("temp_f", "humidity", "wind_mph"):
+        if r.get(k) is None:
+            r[k] = wx.get(k)
+    return r
+
+
+def _same_race(a, b):
+    """Named the same in your notes, or the same start (within 300 m) and distance (within 5%)."""
+    name = lambda r: (r.get("notes") or "").splitlines()[0].strip().lower() if r.get("notes") else ""
+    if name(a) and name(a) == name(b):
+        return True
+    if a.get("start_ll") and b.get("start_ll") and a["miles"] and b["miles"]:
+        return (float(_haversine(*a["start_ll"], *b["start_ll"])) <= 300
+                and abs(a["miles"] - b["miles"]) <= 0.05 * max(a["miles"], b["miles"]))
+    return False
+
+
+def _repeat_races(rs):
+    """Races you've run again in a later year."""
+    races = [r for r in rs if r["race"]]
+    return sum(1 for i, b in enumerate(races)
+               if any(_d(a["date"]).year < _d(b["date"]).year and _same_race(a, b) for a in races[:i]))
 
 
 def _season(day):
@@ -835,6 +871,9 @@ R.update({
     "deep_freeze": RUN(lambda r: r.get("temp_f") is not None and r["temp_f"] <= 15),
     "wind_beneath_my_wings": RUN(lambda r: r.get("wind_mph") is not None and r["wind_mph"] >= 20),
     "perfect_weather": RUN(_perfect),
+    "thunderstruck": RUN(lambda r: bool(_wx(r, "thunder"))),
+    "suns_out": RUN(lambda r: (_wx(r, "uv_max") or 0) >= 7),
+    "foggy_bottom": RUN(lambda r: bool(_wx(r, "fog"))),
     "four_seasons": HIST(_four_seasons, "seasons"),
     "weather_or_not": HIST(lambda rs: any(map(_rain, rs)) + any(map(_snow, rs)) + any(
         r.get("temp_f") is not None and r["temp_f"] <= 32 for r in rs), "kinds"),
@@ -871,6 +910,7 @@ R.update({
     "triple_crown": HIST(_race_kinds, "distances"),
     "the_big_one": RUN(lambda r: r["race"] and r["miles"] * MILE >= 41500),
     "double_header": HIST(_double_header, "races"),
+    "back_for_more": HIST(_repeat_races, "races"),
     # Route & travel
     "full_circle": RUN(lambda r: r.get("start_end_m") is not None and r["start_end_m"] <= 100),
     "long_way_home": RUN(lambda r: r.get("start_end_m") is not None and r["start_end_m"] >= 5 * MILE),
@@ -1037,6 +1077,8 @@ def compute(root=None):
             and r.get("distance_m", 0) > 0 and (r.get("type") or "running") == "running"]
     catalog = load_catalog()
     runs = load_facts(rows, root)
+    wx = weather.for_runs(runs, root)
+    runs = [with_weather(r, wx.get(r["id"])) for r in runs]
     load_context(runs)
     results = evaluate(catalog, runs)
     by_id = {e["id"]: e for e in catalog}

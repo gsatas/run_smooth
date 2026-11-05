@@ -206,4 +206,37 @@ assert earned(res, "petal_pusher") == [(1, "2026-04-06", 1)] and not res["fall_i
 assert earned(res, "waterfront_property") == [(1, "2026-04-12", 3)]
 assert earned(res, "the_long_loop") == [(1, "2026-10-20", 5)] and earned(res, "tourist_season") == [(1, "2026-10-20", 5)]
 
+# --- detailed weather (Open-Meteo hours) and repeat races
+from smoothrun import weather as W  # noqa: E402
+hours = {"time": ["2026-07-01T%02d:00" % h for h in range(24)],
+         "temperature_2m": [70 + h for h in range(24)], "relative_humidity_2m": [50] * 24,
+         "precipitation": [0] * 24, "rain": [0] * 24, "snowfall": [0] * 24,
+         "weather_code": [1] * 13 + [95] + [1] * 10, "wind_speed_10m": [5] * 24,
+         "uv_index": [h / 2 for h in range(24)], "visibility": [20000] * 24}
+start = datetime(2026, 7, 1, 12, 40, tzinfo=timezone.utc)
+got = W.summarize(hours, start, start + timedelta(minutes=30))                  # the 12:00 and 13:00 hours
+assert got["thunder"] and got["rain"] and got["uv_max"] == 6.5 and got["temp_f"] == 82.5 and not got["fog"], got
+assert not W.summarize(hours, start - timedelta(hours=2), start - timedelta(hours=2))["thunder"]
+calls = []
+fake = lambda *a: calls.append(a) or hours
+mir = tempfile.mkdtemp()
+rs = [run(1, "2026-07-01T08:40", start_ll=[40.8, -73.95]), run(2, "2026-07-01T09:00")]   # 2 has no GPS
+rs[0]["utc"] = start.isoformat()
+assert list(W.for_runs(rs, mir, fake)) == [1] and len(calls) == 1
+assert list(W.for_runs(rs, mir, fake)) == [1] and len(calls) == 1                   # saved, not fetched again
+r1 = A.with_weather(rs[0], W.for_runs(rs, mir, fake)[1])
+assert r1["temp_f"] == 82.5 and A.with_weather(dict(rs[0], temp_f=60), got)["temp_f"] == 60   # Smashrun's reading wins
+res = results([r1, A.with_weather(run(3, "2026-07-02T08:00"), dict(got, thunder=False, uv_max=8, fog=True))])
+assert earned(res, "thunderstruck") == [(1, "2026-07-01", 1)] and earned(res, "suns_out") == [(1, "2026-07-02", 3)]
+assert earned(res, "foggy_bottom") == [(1, "2026-07-02", 3)] and earned(res, "singing_in_the_rain") == [(1, "2026-07-01", 1)]
+
+dash = lambda i, when, **kw: run(i, when, 3.1, race=True, **kw)
+rs = [dash(1, "2025-11-27T08:00", notes="Abbot Dash"), dash(2, "2025-12-05T08:00", notes="abbot dash"),   # same year
+      dash(3, "2026-03-01T08:00", start_ll=[40.80, -73.95]), dash(4, "2026-11-26T08:00", notes="Abbot Dash\nfun")]
+assert not results(rs[:3])["back_for_more"]["earned"]
+assert earned(results(rs), "back_for_more") == [(1, "2026-11-26", 4)]
+far = dash(5, "2027-03-01T08:00", start_ll=[40.80, -73.952])                        # ~170 m away, same distance
+assert results(rs[2:3] + [far])["back_for_more"]["value"] == 1
+assert results(rs[2:3] + [dict(far, miles=6.2)])["back_for_more"]["value"] == 0
+
 print("all achievement tests passed")
