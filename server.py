@@ -259,11 +259,20 @@ def restore(job):
 
 
 def sync_runs(job):
-    """Update the local copy of your runs from Smashrun."""
+    """Update the local copy of your runs from Smashrun. The result's "earned" lists achievement
+    levels this sync's runs earned, for the Stats tab's pop-up."""
+    try:
+        before = achievements.load()
+    except Exception:
+        traceback.print_exc()
+        before = None
     result = mirror.sync(S.Client(TOKEN_FILE), step=lambda s: job.__setitem__("step", s), log=log)
     job["step"] = "Checking achievements"
+    result["earned"] = []
     try:   # a rule bug mustn't fail the sync; the runs are already saved
-        achievements.compute()
+        after = achievements.compute()
+        if before is not None:
+            result["earned"] = achievements.newly_earned(before, after, set(result["new"]) | set(result["updated"]))
     except Exception:
         traceback.print_exc()
     return result

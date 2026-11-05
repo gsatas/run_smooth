@@ -268,4 +268,11 @@ res = {x["id"]: x for x in A.evaluate(CAT, late, old + late)}
 assert earned(res, "pr_comeback_90") == [(1, "2027-02-10", 14)]       # 5K best had stood since Oct 31
 assert res["pr_three_in_30"]["value"] == 2                              # a first 10K isn't an improvement
 
+# --- the sync pop-up: only levels newly reached by the sync's own runs
+ach = lambda *earned: {"achievements": [{"id": "x", "name": "X", "group": "G", "description": "d", "levels": [1, 2, 3],
+                                          "earned": [{"at": at, "date": "2026-11-0%d" % run, "run": run} for at, run in earned]}]}
+got = A.newly_earned(ach((1, 1)), ach((1, 1), (2, 5), (3, 6)), {5})
+assert [(g["level"], g["levels"], g["run"]) for g in got] == [(2, 3, 5)]   # level 3 came from run 6, not this sync
+assert A.newly_earned(ach((1, 1)), ach((1, 1)), {1}) == []                  # already earned before
+
 print("all achievement tests passed")

@@ -1224,6 +1224,19 @@ def compute(root=None):
     return doc
 
 
+def newly_earned(before, after, runs):
+    """Levels in `after` that weren't earned in `before` and were reached by one of `runs` (the
+    runs a sync brought in), so a rule or settings change doesn't look like a new award."""
+    had = {(a["id"], e["at"]) for a in before.get("achievements", []) for e in a["earned"]}
+    out = []
+    for a in after.get("achievements", []):
+        for i, e in enumerate(a["earned"]):
+            if (a["id"], e["at"]) not in had and e["run"] in runs:
+                out.append({"id": a["id"], "name": a["name"], "group": a["group"], "description": a["description"],
+                            "level": i + 1, "levels": len(a["levels"]), "date": e["date"], "run": e["run"]})
+    return out
+
+
 def load(root=None):
     """The saved results, recomputed if missing, older than the last sync, or from older code."""
     path = os.path.join(root or mirror.MIRROR_DIR, "achievements.json")
