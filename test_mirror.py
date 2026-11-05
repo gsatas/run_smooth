@@ -50,4 +50,13 @@ idx = mirror.load(root)
 assert {x["id"] for x in idx["runs"][-2:]} == {500, 501} and "removed" not in idx["runs"][-1] and len(idx["runs"]) == 105
 r = mirror.sync(f, "2026-01-01", root, log=lambda m: None)
 assert 500 not in r["removed"] and "removed" not in mirror.load(root)["runs"][-1]   # syncs don't touch old runs
+# swap: after a replace, an old run (outside the synced range) is retired and its new version saved
+runs[700] = {**old, "activityId": 700, "distance": 4.9}
+assert mirror.swap(f, 500, 700, root, log=lambda m: None)
+idx = mirror.load(root)
+by = {x["id"]: x for x in idx["runs"]}
+assert "removed" in by[500] and "removed" not in by[700] and by[700]["distance_m"] == 4900
+r = mirror.sync(f, "2026-01-01", root, log=lambda m: None)
+assert "removed" in {x["id"]: x for x in mirror.load(root)["runs"]}[500]          # a sync keeps it retired
+assert not mirror.swap(f, 500, None, root, log=lambda m: None)
 print("all mirror tests passed")

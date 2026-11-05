@@ -209,10 +209,21 @@ def replace(job):
     info = {}
     log("replace %d (preview %s)" % (aid, p["id"]))
     new_id = S.replace(client, aid, p["_new"], p["_bpath"], log=log, info=info)
+    _update_copy(client, aid, new_id)
     return {"action": "replace", "old_id": aid, "new_id": new_id,
             "link": run_link(client, new_id or aid), "duration_s": float(p["_new"]["duration"]),
             "distance_m": float(p["_new"]["distance"]) * 1000.0,
             "is_race": bool(current.get("isRace")), "validations": info.get("validations") or {}}
+
+
+def _update_copy(client, old_id, new_id):
+    """Keep the local run copy and achievements in step with a replace or restore. Smashrun has
+    already changed by now, so a problem here is logged rather than failing the job."""
+    try:
+        if mirror.swap(client, old_id, new_id, log=log):
+            achievements.compute()
+    except Exception:
+        traceback.print_exc()
 
 
 def restore(job):
@@ -223,6 +234,7 @@ def restore(job):
     info = {}
     log("restore %d" % aid)
     new_id = S.restore(client, aid, BACKUP_DIR, log=log, info=info)
+    _update_copy(client, aid, new_id)
     return {"action": "restore", "old_id": aid, "new_id": new_id, "original_id": info.get("original_id"),
             "link": run_link(client, new_id or aid), "duration_s": float(info.get("duration") or 0),
             "distance_m": float(info.get("distance_km") or 0) * 1000.0,

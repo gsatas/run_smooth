@@ -214,6 +214,24 @@ def sync(client, since=None, root=None, step=None, log=print):
     return result
 
 
+def swap(client, old_id, new_id, root=None, log=print):
+    """After this tool replaces or restores a run on Smashrun: save the new run and mark the old one
+    removed, whatever its date. Syncs only look at runs since SYNC_SINCE, so without this an older
+    run would keep its old version in the copy."""
+    if not new_id or new_id == old_id:
+        return False
+    os.makedirs(_dir("activities", root=root), exist_ok=True)
+    _write_atomic(_dir("activities", "%d.json" % new_id, root=root), client.get(new_id))
+    state = _read(_dir("index.json", root=root), {})
+    removed = {str(k): v for k, v in (state.get("removed") or {}).items()}
+    if old_id in _activities(root):
+        removed[str(old_id)] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    removed.pop(str(new_id), None)
+    rebuild(root, state={**state, "removed": removed})
+    log("mirror: run %d is now %d" % (old_id, new_id))
+    return True
+
+
 def import_folder(folder, before=None, root=None, log=print):
     """Copy activity files from a folder into the run copy: runs that start before `before`
     (SYNC_SINCE) and aren't saved yet. Returns counts."""
