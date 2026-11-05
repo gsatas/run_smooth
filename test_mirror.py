@@ -59,4 +59,20 @@ assert "removed" in by[500] and "removed" not in by[700] and by[700]["distance_m
 r = mirror.sync(f, "2026-01-01", root, log=lambda m: None)
 assert "removed" in {x["id"]: x for x in mirror.load(root)["runs"]}[500]          # a sync keeps it retired
 assert not mirror.swap(f, 500, None, root, log=lambda m: None)
+# the ten-year guard: refuse before deleting anything
+from datetime import datetime, timezone
+from smoothrun import smashrun as S
+now = datetime(2026, 11, 5, tzinfo=timezone.utc)
+assert S.too_old({"startDateTimeLocal": "2014-07-12T10:48:00-04:00"}, now)
+assert S.too_old({"startDateTimeLocal": "2016-11-06T10:48:00-05:00"}, now)          # within the 2-day margin
+assert not S.too_old({"startDateTimeLocal": "2016-11-09T10:48:00-05:00"}, now)
+assert not S.too_old({"startDateTimeLocal": "2020-01-26T10:36:00-05:00"}, now)
+class NoWrites:
+    def _call(s, *a, **k): raise AssertionError("must not call Smashrun: %r" % (a,))
+bk = os.path.join(root, "b.json"); json.dump({"startDateTimeLocal": "2014-07-12T10:48:00-04:00"}, open(bk, "w"))
+try:
+    S.replace(NoWrites(), 2201630, {"startDateTimeLocal": "2014-07-12T10:48:00-04:00"}, bk, log=lambda m: None)
+    raise AssertionError("should have refused")
+except S.SmashrunError as e:
+    assert "refusing" in str(e) and "ten years" in str(e)
 print("all mirror tests passed")

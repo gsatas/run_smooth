@@ -8,7 +8,7 @@ import os
 import re
 import subprocess
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import numpy as np
 
@@ -121,6 +121,25 @@ def to_run(activity):
     start = datetime.fromisoformat(activity["startDateTimeLocal"])
     return Run(activity, series["clock"], series["latitude"], series["longitude"], cad,
                series.get("distance", np.full(n, np.nan)), start)
+
+
+# Smashrun refuses uploads of runs ten years old or more ("Only runs less than ten years old can be
+# saved"). A replace deletes first, so such a run could never be put back. Two days' margin.
+MAX_AGE_YEARS = 10
+
+
+def too_old(activity, now=None):
+    """Why Smashrun wouldn't accept this run again, or None."""
+    start = datetime.fromisoformat(activity["startDateTimeLocal"])
+    now = now or datetime.now(timezone.utc)
+    try:
+        limit = now.replace(year=now.year - MAX_AGE_YEARS)
+    except ValueError:   # Feb 29
+        limit = now.replace(year=now.year - MAX_AGE_YEARS, day=28)
+    if start - timedelta(days=2) < limit:
+        return ("Smashrun won't accept runs ten years old or more, so this run (%s) couldn't be put back "
+                "after deleting it. It can't be replaced on Smashrun." % start.date().isoformat())
+    return None
 
 
 def warnings_for(activity):
@@ -250,6 +269,10 @@ def replace(client, old_id, new_activity, backup_path, log=print, external_id=No
         raise SmashrunError("refusing to replace %d: no backup at %s" % (old_id, backup_path))
     with open(backup_path) as f:
         fallback = json.load(f)   # read before deleting, so a bad backup stops us early
+    for act in (new_activity, fallback):
+        problem = too_old(act)
+        if problem:
+            raise SmashrunError("refusing to replace %d: %s" % (old_id, problem))
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
     log("deleting %d (backup: %s)" % (old_id, backup_path))
     delete(client, old_id)

@@ -166,6 +166,7 @@ def preview(job):
         "duration_s": float(original.get("duration") or 0),
         "smoothed": orig_id is not None,
         "warnings": warnings,
+        "blocked": S.too_old(original),   # Smashrun wouldn't take it back: no Replace
         "backup": os.path.basename(bpath),
         "restorable": restorable,
         "distance": {
@@ -477,6 +478,8 @@ class Handler(BaseHTTPRequestHandler):
         problem = passphrase_problem(body.get("passphrase"))
         if problem:
             return self.send_json(problem[0], {"error": problem[1]})
+        if p["result"].get("blocked"):
+            return self.send_json(409, {"error": p["result"]["blocked"]})
         if p["result"]["warnings"] and body.get("force") is not True:
             return self.send_json(409, {"error": "This run looks already processed. Tick Replace anyway "
                                                  "if you're sure."})

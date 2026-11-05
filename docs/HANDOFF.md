@@ -180,6 +180,15 @@ stats and plots on it, kept separate from the plan and Smooth features.
     is in achievements.json and shown as a Records panel on the achievements page.
 - **Later:** calendar heatmap, backlog sync (also needed for PRs).
 
+## Smashrun's ten-year limit (learned the hard way, 2026-11-05)
+
+Smashrun refuses uploads of runs ten years old or more ("Only runs less than ten years old can be
+saved"). Replace deletes first, so run 2201630 (2014-07-12, 9.68 km) was deleted and couldn't be put
+back; it survives only in `backups/2201630_original.json` and the run copy. `smashrun.too_old()` now
+stops a replace or restore before anything is deleted (2 days' margin), and the preview reports
+`blocked` so the Smooth tab hides Replace. Upload-then-delete isn't possible as-is: Smashrun dedupes by
+start time.
+
 ## Original plan: the web app on the home server
 
 The user is moving this work to their home server. It runs Docker services and is reachable only
