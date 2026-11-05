@@ -1,0 +1,2172 @@
+[
+ {
+  "id": "total_6",
+  "name": "Around Central Park",
+  "group": "Distance",
+  "description": "Run 6 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_13",
+  "name": "The Length of Manhattan",
+  "group": "Distance",
+  "description": "Run 13 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_32",
+  "name": "Around Manhattan",
+  "group": "Distance",
+  "description": "Run 32 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_52",
+  "name": "New York to Princeton",
+  "group": "Distance",
+  "description": "Run 52 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_75",
+  "name": "New York to New Haven",
+  "group": "Distance",
+  "description": "Run 75 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_95",
+  "name": "New York to Philadelphia",
+  "group": "Distance",
+  "description": "Run 95 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_124",
+  "name": "New York to Hartford",
+  "group": "Distance",
+  "description": "Run 124 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_150",
+  "name": "New York to Albany",
+  "group": "Distance",
+  "description": "Run 150 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_180",
+  "name": "New York to Providence",
+  "group": "Distance",
+  "description": "Run 180 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_225",
+  "name": "New York to Boston",
+  "group": "Distance",
+  "description": "Run 225 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_250",
+  "name": "New York to Syracuse",
+  "group": "Distance",
+  "description": "Run 250 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_372",
+  "name": "New York to Montreal",
+  "group": "Distance",
+  "description": "Run 372 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_398_pittsburgh",
+  "name": "New York to Pittsburgh",
+  "group": "Distance",
+  "description": "Run 398 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_462",
+  "name": "New York to Cleveland",
+  "group": "Distance",
+  "description": "Run 462 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_545_columbus",
+  "name": "New York to Columbus",
+  "group": "Distance",
+  "description": "Run 545 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_634",
+  "name": "New York to Charlotte",
+  "group": "Distance",
+  "description": "Run 634 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_727",
+  "name": "New York to Indianapolis",
+  "group": "Distance",
+  "description": "Run 727 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_766_charleston",
+  "name": "New York to Charleston",
+  "group": "Distance",
+  "description": "Run 766 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_873",
+  "name": "New York to Atlanta",
+  "group": "Distance",
+  "description": "Run 873 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_903",
+  "name": "New York to Nashville",
+  "group": "Distance",
+  "description": "Run 903 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_939",
+  "name": "New York to Jacksonville",
+  "group": "Distance",
+  "description": "Run 939 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_963",
+  "name": "New York to St. Louis",
+  "group": "Distance",
+  "description": "Run 963 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1090_orlando",
+  "name": "New York to Orlando",
+  "group": "Distance",
+  "description": "Run 1,090 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1146_tampa",
+  "name": "New York to Tampa",
+  "group": "Distance",
+  "description": "Run 1,146 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1188",
+  "name": "New York to Sarasota",
+  "group": "Distance",
+  "description": "Run 1,188 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1304_new_orleans",
+  "name": "New York to New Orleans",
+  "group": "Distance",
+  "description": "Run 1,304 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1450",
+  "name": "New York to Key West",
+  "group": "Distance",
+  "description": "Run 1,450 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1528",
+  "name": "New York to Las Vegas",
+  "group": "Distance",
+  "description": "Run 1,528 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1566",
+  "name": "New York to Dallas",
+  "group": "Distance",
+  "description": "Run 1,566 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1761",
+  "name": "New York to Austin",
+  "group": "Distance",
+  "description": "Run 1,761 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_1790",
+  "name": "New York to Denver",
+  "group": "Distance",
+  "description": "Run 1,790 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2176",
+  "name": "New York to Salt Lake City",
+  "group": "Distance",
+  "description": "Run 2,176 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2463_phoenix",
+  "name": "New York to Phoenix",
+  "group": "Distance",
+  "description": "Run 2,463 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2697",
+  "name": "New York to Mexico City",
+  "group": "Distance",
+  "description": "Run 2,697 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2759_san_diego",
+  "name": "New York to San Diego",
+  "group": "Distance",
+  "description": "Run 2,759 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2858",
+  "name": "New York to Seattle",
+  "group": "Distance",
+  "description": "Run 2,858 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2895_portland",
+  "name": "New York to Portland",
+  "group": "Distance",
+  "description": "Run 2,895 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2902_san_francisco",
+  "name": "New York to San Francisco",
+  "group": "Distance",
+  "description": "Run 2,902 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_2994",
+  "name": "New York to Vancouver",
+  "group": "Distance",
+  "description": "Run 2,994 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3069",
+  "name": "New York to Whistler",
+  "group": "Distance",
+  "description": "Run 3,069 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3281",
+  "name": "New York to Guatemala City",
+  "group": "Distance",
+  "description": "Run 3,281 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3329",
+  "name": "New York to Belmopan",
+  "group": "Distance",
+  "description": "Run 3,329 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3387",
+  "name": "New York to San Salvador",
+  "group": "Distance",
+  "description": "Run 3,387 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3525",
+  "name": "New York to Tegucigalpa",
+  "group": "Distance",
+  "description": "Run 3,525 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3730",
+  "name": "New York to Managua",
+  "group": "Distance",
+  "description": "Run 3,730 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3817",
+  "name": "New York to Juneau",
+  "group": "Distance",
+  "description": "Run 3,817 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_3988",
+  "name": "New York to San Jose",
+  "group": "Distance",
+  "description": "Run 3,988 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_4370",
+  "name": "New York to Anchorage",
+  "group": "Distance",
+  "description": "Run 4,370 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "total_4465",
+  "name": "New York to Panama City",
+  "group": "Distance",
+  "description": "Run 4,465 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "single_1_6",
+  "name": "Reservoir Regular",
+  "group": "Distance",
+  "description": "Run 1.6 miles in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "single_3",
+  "name": "Bridge to Times Square",
+  "group": "Distance",
+  "description": "Run 3 miles in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "single_6",
+  "name": "Central Park Circuit",
+  "group": "Distance",
+  "description": "Run 6 miles in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "single_10",
+  "name": "A Long Manhattan",
+  "group": "Distance",
+  "description": "Run 10 miles in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "single_13_1",
+  "name": "Woooah You’re Halfway There",
+  "group": "Distance",
+  "description": "Run a half marathon, 13.1 miles, in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "single_20",
+  "name": "Make It a Venti",
+  "group": "Distance",
+  "description": "Run 20 miles in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "single_26_2",
+  "name": "Woooah Living on a Prayer",
+  "group": "Distance",
+  "description": "Run a marathon, 26.2 miles, in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "streak_3_days",
+  "name": "Three's Company",
+  "group": "Consistency",
+  "description": "Run 3 days in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "streak_5_days",
+  "name": "Five-Day Stretch",
+  "group": "Consistency",
+  "description": "Run 5 days in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_3x_3weeks",
+  "name": "Three Times, Three Weeks",
+  "group": "Consistency",
+  "description": "Run 3 times a week for 3 weeks in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_3x_6weeks",
+  "name": "A Regular Thing",
+  "group": "Consistency",
+  "description": "Run 3 times a week for 6 weeks in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_3x_3months",
+  "name": "Three a Week, Month After Month",
+  "group": "Consistency",
+  "description": "Run 3 times every week for 3 months in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_3x_6months",
+  "name": "Half a Year of Running",
+  "group": "Consistency",
+  "description": "Run 3 times every week for 6 months in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_4x_4weeks",
+  "name": "Four for Four",
+  "group": "Consistency",
+  "description": "Run 4 times a week for 4 weeks in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_5x_4weeks",
+  "name": "Five-Day Regular",
+  "group": "Consistency",
+  "description": "Run 5 times a week for 4 weeks in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_once_year",
+  "name": "A Year of Showing Up",
+  "group": "Consistency",
+  "description": "Run at least once a week for 52 weeks in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_8_days",
+  "name": "Monthly Regular",
+  "group": "Consistency",
+  "description": "Run on 8 different days in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_10_days",
+  "name": "Ten-Day Month",
+  "group": "Consistency",
+  "description": "Run on 10 different days in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_15_days",
+  "name": "Half the Month",
+  "group": "Consistency",
+  "description": "Run on 15 different days in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_20_days",
+  "name": "Two-Thirds of the Month",
+  "group": "Consistency",
+  "description": "Run on 20 different days in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_every_weekend",
+  "name": "Weekend Regular",
+  "group": "Consistency",
+  "description": "Run every weekend of a month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_20_miles",
+  "name": "Twenty-Mile Month",
+  "group": "Consistency",
+  "description": "Run 20 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_30_miles",
+  "name": "Thirty-Mile Month",
+  "group": "Consistency",
+  "description": "Run 30 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_40_miles",
+  "name": "Forty-Mile Month",
+  "group": "Consistency",
+  "description": "Run 40 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_50_miles",
+  "name": "Fifty-Mile Month",
+  "group": "Consistency",
+  "description": "Run 50 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_60_miles",
+  "name": "Sixty-Mile Month",
+  "group": "Consistency",
+  "description": "Run 60 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_70_miles",
+  "name": "Seventy-Mile Month",
+  "group": "Consistency",
+  "description": "Run 70 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_80_miles",
+  "name": "Eighty-Mile Month",
+  "group": "Consistency",
+  "description": "Run 80 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_90_miles",
+  "name": "Ninety-Mile Month",
+  "group": "Consistency",
+  "description": "Run 90 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monthly_100_miles",
+  "name": "Century Month",
+  "group": "Consistency",
+  "description": "Run 100 miles in one month.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "distance_growth_3months",
+  "name": "Building Momentum",
+  "group": "Consistency",
+  "description": "Run more miles than the month before, 3 months in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "distance_growth_6months",
+  "name": "The Climb",
+  "group": "Consistency",
+  "description": "Run more miles than the month before, 6 months in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekday_all_7",
+  "name": "The Full Set",
+  "group": "Consistency",
+  "description": "Run on every day of the week within 7 days.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "monday_5",
+  "name": "Monday Motivation",
+  "group": "Consistency",
+  "description": "Run on 5 Mondays in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "wednesday_10",
+  "name": "Hump Day",
+  "group": "Consistency",
+  "description": "Run on 10 Wednesdays.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "friday_5",
+  "name": "Friday Feeling",
+  "group": "Consistency",
+  "description": "Run on 5 Fridays in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "saturday_10",
+  "name": "Saturday Club",
+  "group": "Consistency",
+  "description": "Run on 10 Saturdays.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "sunday_10",
+  "name": "Sunday Funday",
+  "group": "Consistency",
+  "description": "Run on 10 Sundays.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "all_weekdays_month",
+  "name": "The Working Week",
+  "group": "Consistency",
+  "description": "Run every weekday, Monday to Friday, in 4 different weeks.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "calendar_month_dates_1_31",
+  "name": "The Calendar",
+  "group": "Consistency",
+  "description": "Run on every date from the 1st to the 31st, in any months.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "clock_6am_9pm",
+  "name": "Daylight Hours",
+  "group": "Consistency",
+  "description": "Start a run in every hour from 6 AM to 9 PM.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "clock_24_hours",
+  "name": "Around the Clock",
+  "group": "Consistency",
+  "description": "Start a run in every hour of the day.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "runs_100",
+  "name": "Century Club",
+  "group": "Consistency",
+  "description": "Run 100 times.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "runs_500",
+  "name": "Half Thousand",
+  "group": "Consistency",
+  "description": "Run 500 times.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "runs_1000",
+  "name": "Four Digits",
+  "group": "Consistency",
+  "description": "Run 1,000 times.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "active_weeks_50",
+  "name": "Veteran",
+  "group": "Consistency",
+  "description": "Run in 50 different weeks.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "active_months_12",
+  "name": "Year-Round Runner",
+  "group": "Consistency",
+  "description": "Run every month for 12 months in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "active_years_3",
+  "name": "Annual Tradition",
+  "group": "Consistency",
+  "description": "Run every year for 3 years in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "active_years_5",
+  "name": "Still Going",
+  "group": "Consistency",
+  "description": "Run every year for 5 years in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "comeback_30days",
+  "name": "The Comeback",
+  "group": "Consistency",
+  "description": "Run again after a break of 30 days or more.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "comeback_90days",
+  "name": "The Phoenix",
+  "group": "Consistency",
+  "description": "Run again after a break of 90 days or more.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_10_miles",
+  "name": "10-Mile Week",
+  "group": "Consistency",
+  "description": "Run 10 miles in one week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_15_miles",
+  "name": "15-Mile Week",
+  "group": "Consistency",
+  "description": "Run 15 miles in one week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_20_miles",
+  "name": "20-Mile Week",
+  "group": "Consistency",
+  "description": "Run 20 miles in one week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_25_miles",
+  "name": "25-Mile Week",
+  "group": "Consistency",
+  "description": "Run 25 miles in one week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_30_miles",
+  "name": "30-Mile Week",
+  "group": "Consistency",
+  "description": "Run 30 miles in one week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_35_miles",
+  "name": "35-Mile Week",
+  "group": "Consistency",
+  "description": "Run 35 miles in one week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weekly_40_miles",
+  "name": "40-Mile Week",
+  "group": "Consistency",
+  "description": "Run 40 miles in one week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "pr_first_mile",
+  "name": "First Fastest",
+  "group": "Performance",
+  "description": "Set your first mile record.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_5k",
+  "name": "5K Record",
+  "group": "Performance",
+  "description": "Set a new 5K best.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_10k",
+  "name": "10K Record",
+  "group": "Performance",
+  "description": "Set a new 10K best.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_half",
+  "name": "Half Marathon Record",
+  "group": "Performance",
+  "description": "Set a new half marathon best.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_marathon",
+  "name": "Marathon Record",
+  "group": "Performance",
+  "description": "Set a new marathon best.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_three_distances",
+  "name": "Speedster",
+  "group": "Performance",
+  "description": "Set bests at 3 different distances.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_five_distances",
+  "name": "Record Breaker",
+  "group": "Performance",
+  "description": "Hold bests at the mile, 5K, 10K, half marathon and marathon.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_three_in_30",
+  "name": "On a Roll",
+  "group": "Performance",
+  "description": "Set bests at 3 distances within 30 days.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "mile_sub_12",
+  "name": "Breaking 12",
+  "group": "Performance",
+  "description": "Run a mile in under 12 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "mile_sub_10",
+  "name": "Breaking 10",
+  "group": "Performance",
+  "description": "Run a mile in under 10 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "mile_sub_9",
+  "name": "Breaking 9",
+  "group": "Performance",
+  "description": "Run a mile in under 9 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "mile_sub_8",
+  "name": "Breaking 8",
+  "group": "Performance",
+  "description": "Run a mile in under 8 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "mile_sub_7",
+  "name": "Breaking 7",
+  "group": "Performance",
+  "description": "Run a mile in under 7 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "mile_sub_6",
+  "name": "Breaking 6",
+  "group": "Performance",
+  "description": "Run a mile in under 6 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "5k_sub_30",
+  "name": "Sub-30 5K",
+  "group": "Performance",
+  "description": "Run 5K in under 30 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "5k_sub_25",
+  "name": "Sub-25 5K",
+  "group": "Performance",
+  "description": "Run 5K in under 25 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "5k_sub_20",
+  "name": "Sub-20 5K",
+  "group": "Performance",
+  "description": "Run 5K in under 20 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "10k_sub_60",
+  "name": "Sub-60 10K",
+  "group": "Performance",
+  "description": "Run 10K in under an hour.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "10k_sub_55",
+  "name": "Sub-55 10K",
+  "group": "Performance",
+  "description": "Run 10K in under 55 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "half_sub_2h",
+  "name": "Two-Hour Half",
+  "group": "Performance",
+  "description": "Run a half marathon in under 2 hours.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "half_sub_90",
+  "name": "Ninety-Minute Half",
+  "group": "Performance",
+  "description": "Run a half marathon in under 90 minutes.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "negative_split_once",
+  "name": "Negative Split",
+  "group": "Performance",
+  "description": "Run the second half of a run faster than the first.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "negative_split_three",
+  "name": "The Negative Negative Split",
+  "group": "Performance",
+  "description": "Run negative splits 3 times.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "even_steven",
+  "name": "Even Steven",
+  "group": "Performance",
+  "description": "On a run of 5 miles or more, keep every mile within 10 seconds of the others.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "perfectly_even",
+  "name": "Perfectly Even",
+  "group": "Performance",
+  "description": "Run 5 miles in a row within 5 seconds of each other.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "fast_finish",
+  "name": "Fast Finish",
+  "group": "Performance",
+  "description": "Make your last full mile your fastest.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "crescendo_3",
+  "name": "The Crescendo",
+  "group": "Performance",
+  "description": "Run 3 miles in a row, each faster than the last.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "perfect_mile",
+  "name": "The Perfect Mile",
+  "group": "Performance",
+  "description": "Run a mile with all four quarters within 5 seconds of each other.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "last_gasp",
+  "name": "The Last Gasp",
+  "group": "Performance",
+  "description": "Run your fastest kilometer last.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "metronome",
+  "name": "The Metronome",
+  "group": "Performance",
+  "description": "On a run of 5 km or more, keep every kilometer within 5% of your average pace.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "5k_improve_5pct",
+  "name": "Getting Faster",
+  "group": "Performance",
+  "description": "Beat your 5K best by 5% or more.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "5k_improve_10pct",
+  "name": "Big Improvement",
+  "group": "Performance",
+  "description": "Beat your 5K best by 10% or more.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "10k_improve_5pct",
+  "name": "The Next Level",
+  "group": "Performance",
+  "description": "Beat your 10K best by 5% or more.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_break_6months",
+  "name": "Breakthrough",
+  "group": "Performance",
+  "description": "Beat a best that has stood for 6 months.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_break_year",
+  "name": "Long Time Coming",
+  "group": "Performance",
+  "description": "Beat a best that has stood for a year.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "pr_comeback_90",
+  "name": "The Comeback Trail",
+  "group": "Performance",
+  "description": "Set a best at a distance that hadn’t improved in 90 days.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "5k_three_prs_60",
+  "name": "Consistent Progress",
+  "group": "Performance",
+  "description": "Improve your 5K best 3 times within 60 days.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "speed_surprise",
+  "name": "Speed Surprise",
+  "group": "Performance",
+  "description": "Run a mile faster than your best 5K pace.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "speed_on_longest",
+  "name": "Speed on the Long Run",
+  "group": "Performance",
+  "description": "Run your fastest mile during your longest run.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "tortoise_hare",
+  "name": "Tortoise and the Hare",
+  "group": "Performance",
+  "description": "Run a mile at least 2 minutes faster than the one before.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "old_reliable",
+  "name": "Old Reliable",
+  "group": "Performance",
+  "description": "Come within 1% of one of your bests 5 times.",
+  "levels": [],
+  "first_cut": false,
+  "later": "earlier PRs"
+ },
+ {
+  "id": "make_a_wish",
+  "name": "Make a Wish",
+  "group": "Random & Quirky",
+  "description": "Finish a run at 11:11.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "high_noon",
+  "name": "High Noon",
+  "group": "Random & Quirky",
+  "description": "Finish a run at noon.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "witching_hour",
+  "name": "Witching Hour",
+  "group": "Random & Quirky",
+  "description": "Start a run between midnight and 1 AM.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "midnight_express",
+  "name": "Midnight Express",
+  "group": "Random & Quirky",
+  "description": "Start a run at midnight.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "double_digits",
+  "name": "Double Digits",
+  "group": "Random & Quirky",
+  "description": "Finish a run at 10:10.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "1234",
+  "name": "One, Two, Three, Four",
+  "group": "Random & Quirky",
+  "description": "Finish a run at 12:34.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "pi_day",
+  "name": "Pi Day",
+  "group": "Random & Quirky",
+  "description": "Run 3.14 miles on March 14.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "tau_day",
+  "name": "Tau Day",
+  "group": "Random & Quirky",
+  "description": "Run 6.28 miles on June 28.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "prime_time",
+  "name": "Prime Time",
+  "group": "Random & Quirky",
+  "description": "Run a distance and time made of prime numbers, like 3.17 miles in 37:11.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "flat_numbers",
+  "name": "Flat Numbers",
+  "group": "Random & Quirky",
+  "description": "Run a whole number of miles in a whole number of minutes, like 3.00 miles in 30:00.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "pi_run",
+  "name": "Pi Approximation",
+  "group": "Random & Quirky",
+  "description": "Run 3.14 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "lucky_sevens",
+  "name": "Lucky Sevens",
+  "group": "Random & Quirky",
+  "description": "Run 7.77 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "devils_distance",
+  "name": "The Devil's Distance",
+  "group": "Random & Quirky",
+  "description": "Run 6.66 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "eleven_eleven",
+  "name": "Eleven Eleven",
+  "group": "Random & Quirky",
+  "description": "Run 11.11 miles.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "friday_thirteenth",
+  "name": "Friday the 13th",
+  "group": "Random & Quirky",
+  "description": "Run on a Friday the 13th.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "leap_day",
+  "name": "Leap Day",
+  "group": "Random & Quirky",
+  "description": "Run on February 29.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "new_years_day",
+  "name": "Fresh Start",
+  "group": "Random & Quirky",
+  "description": "Run on New Year’s Day.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "halloween",
+  "name": "Running on Empty… or Treats",
+  "group": "Random & Quirky",
+  "description": "Run on Halloween.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "christmas",
+  "name": "Jingle Miles",
+  "group": "Random & Quirky",
+  "description": "Run on Christmas Day.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "may_the_fourth",
+  "name": "May the Fourth Be With You",
+  "group": "Random & Quirky",
+  "description": "Run on May 4.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "groundhog_day",
+  "name": "Groundhog Day",
+  "group": "Random & Quirky",
+  "description": "Run on February 2.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "palindrome_date",
+  "name": "Date With Destiny",
+  "group": "Random & Quirky",
+  "description": "Run on a date that reads the same backwards, like 2021-12-02.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "full_moon_fever",
+  "name": "Full Moon Fever",
+  "group": "Random & Quirky",
+  "description": "Run under a full moon.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "dark_side",
+  "name": "Dark Side",
+  "group": "Random & Quirky",
+  "description": "Run at night on a new moon.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "borough_hopper",
+  "name": "Borough Hopper",
+  "group": "Random & Quirky",
+  "description": "Run in more than one NYC borough.",
+  "levels": [
+   2,
+   3,
+   4,
+   5
+  ],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "state_lines",
+  "name": "State Lines",
+  "group": "Random & Quirky",
+  "description": "Run in more than one US state.",
+  "levels": [
+   2,
+   5,
+   10,
+   15,
+   25,
+   50
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "international_runner",
+  "name": "International Runner",
+  "group": "Random & Quirky",
+  "description": "Run in more than one country.",
+  "levels": [
+   2,
+   3,
+   5,
+   10,
+   20,
+   50
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "double_trouble",
+  "name": "Double Trouble",
+  "group": "Random & Quirky",
+  "description": "Run twice in one day.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "triple_threat",
+  "name": "Triple Threat",
+  "group": "Random & Quirky",
+  "description": "Run three times in one day.",
+  "levels": [
+   1,
+   3,
+   5,
+   10
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "night_owl",
+  "name": "Night Owl",
+  "group": "Random & Quirky",
+  "description": "Start a run after 10 PM.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25,
+   50
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "early_bird",
+  "name": "Early Bird",
+  "group": "Random & Quirky",
+  "description": "Start a run before 6 AM.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25,
+   50
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "singing_in_the_rain",
+  "name": "Singing in the Rain",
+  "group": "Weather",
+  "description": "Run in the rain.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "rain_check",
+  "name": "Rain Check",
+  "group": "Weather",
+  "description": "Keep running in the rain.",
+  "levels": [
+   1,
+   5,
+   10,
+   25,
+   50
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "snow_problem",
+  "name": "Snow Problem",
+  "group": "Weather",
+  "description": "Run while it’s snowing.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "snowflake",
+  "name": "Snowflake",
+  "group": "Weather",
+  "description": "Keep running in the snow.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "cold_feet",
+  "name": "Cold Feet",
+  "group": "Weather",
+  "description": "Run when it’s freezing, 32°F or colder.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "deep_freeze",
+  "name": "Deep Freeze",
+  "group": "Weather",
+  "description": "Run when it’s 15°F or colder.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "wind_beneath_my_wings",
+  "name": "Wind Beneath My Wings",
+  "group": "Weather",
+  "description": "Run in wind of 20 mph or more.",
+  "levels": [
+   1,
+   5,
+   10,
+   25
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "perfect_weather",
+  "name": "Perfect Weather",
+  "group": "Weather",
+  "description": "Run when it’s 55–65°F, dry and not too humid.",
+  "levels": [
+   1,
+   5,
+   10,
+   25,
+   50
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "four_seasons",
+  "name": "Four Seasons",
+  "group": "Weather",
+  "description": "Run in all four seasons in one year.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "weather_or_not",
+  "name": "Weather or Not",
+  "group": "Weather",
+  "description": "Run in rain, in snow and below freezing.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "thunderstruck",
+  "name": "Thunderstruck",
+  "group": "Weather",
+  "description": "Run in a thunderstorm.",
+  "levels": [],
+  "first_cut": false,
+  "later": "detailed weather"
+ },
+ {
+  "id": "suns_out",
+  "name": "Sun's Out",
+  "group": "Weather",
+  "description": "Run when the UV index is 7 or higher.",
+  "levels": [
+   1,
+   5,
+   10,
+   25
+  ],
+  "first_cut": false,
+  "later": "detailed weather"
+ },
+ {
+  "id": "foggy_bottom",
+  "name": "Foggy Bottom",
+  "group": "Weather",
+  "description": "Run in thick fog.",
+  "levels": [],
+  "first_cut": false,
+  "later": "detailed weather"
+ },
+ {
+  "id": "spring_has_sprung",
+  "name": "Spring Has Sprung",
+  "group": "Weather",
+  "description": "Your first perfect-weather run of spring.",
+  "levels": [
+   1,
+   2,
+   3,
+   5,
+   10
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "autumn_is_calling",
+  "name": "Autumn Is Calling",
+  "group": "Weather",
+  "description": "Your first perfect-weather run of fall.",
+  "levels": [
+   1,
+   2,
+   3,
+   5,
+   10
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "petal_pusher",
+  "name": "Petal Pusher",
+  "group": "Place, Seasonal & Life",
+  "description": "Run in Central Park during cherry blossom season.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "fall_ing_for_it",
+  "name": "Fall-ing for It",
+  "group": "Place, Seasonal & Life",
+  "description": "Run in Central Park while the leaves are turning.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "turkey_trot",
+  "name": "Turkey Trot",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on Thanksgiving.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "twilight_zone",
+  "name": "The Twilight Zone",
+  "group": "Place, Seasonal & Life",
+  "description": "Run between Christmas and New Year’s.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "birthday_suit",
+  "name": "Birthday Suit",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on your birthday.",
+  "levels": [
+   1,
+   2,
+   3,
+   5,
+   10
+  ],
+  "first_cut": false,
+  "later": "personal settings"
+ },
+ {
+  "id": "intervention",
+  "name": "Intervention",
+  "group": "Place, Seasonal & Life",
+  "description": "Start a run in New York on a July afternoon.",
+  "levels": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "bridge_troll",
+  "name": "Bridge Troll",
+  "group": "Place, Seasonal & Life",
+  "description": "Run across a New York bridge.",
+  "levels": [
+   1,
+   2,
+   3,
+   5,
+   10
+  ],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "borough_call",
+  "name": "Borough Call",
+  "group": "Place, Seasonal & Life",
+  "description": "Run in all five boroughs in one year.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "reservoir_dogs",
+  "name": "Reservoir Dogs",
+  "group": "Place, Seasonal & Life",
+  "description": "Run a full loop of the Central Park Reservoir.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "the_long_loop",
+  "name": "The Long Loop",
+  "group": "Place, Seasonal & Life",
+  "description": "Run a full loop of Central Park.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "concrete_jungle",
+  "name": "Concrete Jungle",
+  "group": "Place, Seasonal & Life",
+  "description": "Run in Manhattan, Brooklyn and Queens in one week.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "waterfront_property",
+  "name": "Waterfront Property",
+  "group": "Place, Seasonal & Life",
+  "description": "Run a mile along the New York waterfront.",
+  "levels": [
+   1,
+   5,
+   10,
+   25
+  ],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "tourist_season",
+  "name": "Tourist Season",
+  "group": "Place, Seasonal & Life",
+  "description": "Run through Times Square.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "the_great_escape",
+  "name": "The Great Escape",
+  "group": "Place, Seasonal & Life",
+  "description": "Run from Manhattan into another borough.",
+  "levels": [],
+  "first_cut": false,
+  "later": "map shapes"
+ },
+ {
+  "id": "first_day_summer",
+  "name": "First Day of Summer",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on the summer solstice.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "longest_day",
+  "name": "Longest Day",
+  "group": "Place, Seasonal & Life",
+  "description": "Be out running at sunrise on the summer solstice.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "shortest_day",
+  "name": "Shortest Day",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on the winter solstice.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "dog_days",
+  "name": "Dog Days",
+  "group": "Place, Seasonal & Life",
+  "description": "Run 7 times in one year when it’s above 85°F.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "september_reset",
+  "name": "September Reset",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on September 1.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "spooky_season",
+  "name": "Spooky Season",
+  "group": "Place, Seasonal & Life",
+  "description": "Run between October 13 and 31.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "sunday_scaries",
+  "name": "Sunday Scaries",
+  "group": "Place, Seasonal & Life",
+  "description": "Start a run after 7 PM on a Sunday.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "too_damn_hot",
+  "name": "It’s Too Damn Hot",
+  "group": "Place, Seasonal & Life",
+  "description": "Run when it’s 95°F or hotter.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "who_does_this",
+  "name": "Who Does This?",
+  "group": "Place, Seasonal & Life",
+  "description": "Start a run between 2 and 4 AM.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "lunch_break",
+  "name": "Lunch Break?",
+  "group": "Place, Seasonal & Life",
+  "description": "Start a run between noon and 2 PM on a weekday.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "dinner_can_wait",
+  "name": "Dinner Can Wait",
+  "group": "Place, Seasonal & Life",
+  "description": "Start a run between 6 and 8 PM.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "the_commitment",
+  "name": "The Commitment",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on Christmas Eve and Christmas Day.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "no_days_off",
+  "name": "No Days Off?",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on New Year’s Eve and New Year’s Day.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "birthday_week",
+  "name": "Birthday Week",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on 3 days in the week around your birthday.",
+  "levels": [
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "first_cut": false,
+  "later": "personal settings"
+ },
+ {
+  "id": "half_birthday",
+  "name": "Half Birthday",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on your half birthday.",
+  "levels": [],
+  "first_cut": false,
+  "later": "personal settings"
+ },
+ {
+  "id": "anniversary_run",
+  "name": "Anniversary Run",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on the anniversary of the day you started tracking achievements.",
+  "levels": [
+   1,
+   2,
+   3,
+   5,
+   10
+  ],
+  "first_cut": false,
+  "later": "personal settings"
+ },
+ {
+  "id": "the_usual",
+  "name": "The Usual",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on the same date 3 months in a row.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "date_night",
+  "name": "Date Night",
+  "group": "Place, Seasonal & Life",
+  "description": "Run on Valentine’s Day.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "hill_climber",
+  "name": "Hill Climber",
+  "group": "Elevation & Race",
+  "description": "Climb 1,000 feet in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "mountain_goat",
+  "name": "Mountain Goat",
+  "group": "Elevation & Race",
+  "description": "Climb 5,000 feet.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "stairway_to_heaven",
+  "name": "Stairway to Heaven",
+  "group": "Elevation & Race",
+  "description": "Climb 10,000 feet.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "vertical_mile",
+  "name": "The Vertical Mile",
+  "group": "Elevation & Race",
+  "description": "Climb 5,280 feet in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "what_goes_up",
+  "name": "What Goes Up",
+  "group": "Elevation & Race",
+  "description": "Climb and descend 500 feet each in one run.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "king_of_the_hill",
+  "name": "King of the Hill",
+  "group": "Elevation & Race",
+  "description": "Climb steadily for a full mile.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "race_day",
+  "name": "Race Day",
+  "group": "Elevation & Race",
+  "description": "Run your first race.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "triple_crown",
+  "name": "Triple Crown",
+  "group": "Elevation & Race",
+  "description": "Race a 5K, a 10K and a half marathon.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "the_big_one",
+  "name": "The Big One",
+  "group": "Elevation & Race",
+  "description": "Race a marathon.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "double_header",
+  "name": "Double Header",
+  "group": "Elevation & Race",
+  "description": "Run two races within a week.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "serial_racer",
+  "name": "Serial Racer",
+  "group": "Elevation & Race",
+  "description": "Keep racing.",
+  "levels": [
+   5,
+   10,
+   25,
+   50,
+   100
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "back_for_more",
+  "name": "Back for More",
+  "group": "Elevation & Race",
+  "description": "Run the same race in two different years.",
+  "levels": [],
+  "first_cut": false,
+  "later": "race names"
+ },
+ {
+  "id": "full_circle",
+  "name": "Full Circle",
+  "group": "Route & Travel Milestones",
+  "description": "Finish within 100 meters of where you started.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "out_and_back",
+  "name": "Out and Back",
+  "group": "Route & Travel Milestones",
+  "description": "Run out and back along the same route.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "long_way_home",
+  "name": "The Long Way Home",
+  "group": "Route & Travel Milestones",
+  "description": "Finish 5 miles or more from where you started.",
+  "levels": [],
+  "first_cut": true
+ },
+ {
+  "id": "distance_band_firsts",
+  "name": "Distance Explorer",
+  "group": "Route & Travel Milestones",
+  "description": "Run each whole-mile distance from 3 to 26 miles for the first time.",
+  "levels": [
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26
+  ],
+  "first_cut": true
+ },
+ {
+  "id": "jetlag",
+  "name": "Jet Lag",
+  "group": "Route & Travel Milestones",
+  "description": "Run in another time zone when it’s the middle of the night at home.",
+  "levels": [],
+  "first_cut": false,
+  "later": "personal settings"
+ },
+ {
+  "id": "travel_training",
+  "name": "Training on Tour",
+  "group": "Route & Travel Milestones",
+  "description": "Complete planned workouts while traveling.",
+  "levels": [
+   1,
+   3,
+   5,
+   10,
+   25
+  ],
+  "first_cut": false,
+  "later": "personal settings"
+ }
+]
