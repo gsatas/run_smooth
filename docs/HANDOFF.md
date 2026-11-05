@@ -133,7 +133,7 @@ stats and plots on it, kept separate from the plan and Smooth features.
   matches Smashrun's duration. Splits interpolate moving time at each mile/km. Pace, cadence and
   HR are averaged over 200 m; cadence is stored in strides/min and shown as steps/min (×2).
   Route is an SVG line (no map tiles, so the CSP stays closed). One cursor across all charts and
-  the route. Smoothed runs show the original's distance from `GET /runs/<id>/original`.
+  the route.
 - **Later:** achievements (the user's examples are in `~/RunningAchievements.xlsx`), best efforts
   inside runs, PRs, calendar heatmap, backlog sync.
 

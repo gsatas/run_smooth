@@ -20,8 +20,6 @@ from Smashrun:
     GET  /runs/sync        the latest sync job, or {"status": "never"}
     GET  /runs             the index: one summary row per run, newest first
     GET  /runs/<id>        the run's full Smashrun activity JSON, as saved
-    GET  /runs/<id>/original  for a run this tool smoothed: the summary of the original it
-                           replaced, from backups/ (the track itself isn't sent)
 
 Jobs, writes included, run one at a time on a background thread (the pipeline takes ~1 s with
 the local map, but the Overpass fallback can take minutes). Only recent jobs are kept, in memory.
@@ -386,9 +384,6 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/runs/sync":
             job = latest_sync()
             return self.send_json(200, public(job) if job else {"status": "never"})
-        m = re.match(r"^/runs/(\d{1,12})/original$", path)
-        if m:
-            return self.get_original(int(m.group(1)))
         m = re.match(r"^/runs/(\d{1,12})$", path)
         if not m:
             return self.send_json(404, {"error": "Not found."})
@@ -403,21 +398,6 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
-
-    def get_original(self, aid):
-        try:
-            with open(os.path.join(mirror.MIRROR_DIR, "activities", "%d.json" % aid)) as f:
-                orig_id = S.original_id_of(json.load(f))
-        except FileNotFoundError:
-            return self.send_json(404, {"error": "That run isn't in the local copy. Sync first."})
-        if orig_id is None:
-            return self.send_json(404, {"error": "This run wasn't smoothed."})
-        try:
-            with open(os.path.join(BACKUP_DIR, "%d_original.json" % orig_id)) as f:
-                original = json.load(f)
-        except FileNotFoundError:
-            return self.send_json(404, {"error": "The original of this run isn't in the backups."})
-        return self.send_json(200, mirror.summary(original))
 
     def do_POST(self):
         path = self.path.split("?")[0]
