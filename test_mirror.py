@@ -36,4 +36,18 @@ f.calls.clear(); r = mirror.sync(f, "2026-01-01", root, log=lambda m: None)
 assert len(f.calls) == 2 and r["listed"] == 163 and len(r["new"]) == 100 and r["not_fetched"] == 60, r
 json.dump({**json.load(open(os.path.join(root, "index.json"))), "version": 0}, open(os.path.join(root, "index.json"), "w"))
 assert mirror.load(root)["version"] == mirror.SUMMARY_VERSION and len(mirror.load(root)["runs"]) == 103
+# import: older runs from a folder; newer, already-saved and broken files are left alone
+src = tempfile.mkdtemp()
+old = {**act(500, "01-01"), "startDateTimeLocal": "2019-05-01T07:00:00-04:00"}
+for name, a in (("500.json", old), ("1.json", {**act(1, "01-05"), "distance": 99.0}), ("2.json", {**runs[2], "activityId": 2}),
+                ("600.json", {**act(600, "01-01"), "startDateTimeLocal": "2018-01-01T07:00:00-05:00", "activityId": 1})):
+    json.dump(a, open(os.path.join(src, name), "w"))
+open(os.path.join(src, "junk.json"), "w").write("{not json")
+json.dump({**old, "activityId": 501, "recordingKeys": None, "recordingValues": None}, open(os.path.join(src, "501.json"), "w"))
+c = mirror.import_folder(src, "2026-01-01", root, log=lambda m: None)
+assert c == {"added": 2, "already": 1, "too_new": 2, "bad": 1}, c     # 501 is a manual entry, no recording     # 600.json is run 1 again: already saved
+idx = mirror.load(root)
+assert {x["id"] for x in idx["runs"][-2:]} == {500, 501} and "removed" not in idx["runs"][-1] and len(idx["runs"]) == 105
+r = mirror.sync(f, "2026-01-01", root, log=lambda m: None)
+assert 500 not in r["removed"] and "removed" not in mirror.load(root)["runs"][-1]   # syncs don't touch old runs
 print("all mirror tests passed")

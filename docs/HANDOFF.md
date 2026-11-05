@@ -167,7 +167,12 @@ stats and plots on it, kept separate from the plan and Smooth features.
     `mirror/weather.json`. Smashrun's reading wins where it has one; Open-Meteo fills gaps and
     adds thunder (codes 95–99), fog (45/48 or visibility ≤ 500 m) and UV. Back for More: a race
     again in a later year, same = same first line of notes, or start ≤ 300 m and distance ±5%.
-  Later: earlier PRs (the user will copy the pre-2026 runs over from another machine).
+  - Backlog imported (2026-11-05): the user's 324 pre-2026 runs (2014–2024, from a download made on
+    another machine, `~/raw.zip`) went in with `python -m smoothrun.mirror import`, not the API. It only
+    takes runs before SYNC_SINCE (syncs never touch those) and keeps manual entries with no recording.
+    Achievements still count from ACH_SINCE only. Stats has a range picker for the run list and pace
+    chart (since SYNC_SINCE by default, all runs, or a year).
+  Next: the 18 PR achievements, from all runs (the user's decision: distance PRs use the old runs).
 - **Later:** calendar heatmap, backlog sync (also needed for PRs).
 
 ## Original plan: the web app on the home server

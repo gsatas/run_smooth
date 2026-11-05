@@ -96,6 +96,7 @@ mkdir -p mirror                                         # before the first docke
 curl -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:3000/api/runs/sync
 python -m smoothrun.mirror sync --since 2026-01-01      # or from the command line
 python -m smoothrun.mirror rebuild                      # recompute index.json from the files
+python -m smoothrun.mirror import <folder>               # add older runs from saved activity .json files
 ```
 
 Achievements (`smoothrun/achievements.py`, rules in `achievements/catalog.json`) are recomputed from the copy after each sync and served at `GET /achievements`. The service serves `GET /runs`, `GET /runs/<id>`, `GET /runs/sync` and `POST /runs/sync`; Mile

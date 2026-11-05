@@ -10,6 +10,11 @@ format changes, so adding a field never needs a re-fetch.
 
     python -m smoothrun.mirror sync [--since 2026-01-01]
     python -m smoothrun.mirror rebuild
+    python -m smoothrun.mirror import <folder of activity .json files>
+
+Import adds older runs saved elsewhere (for example a full Smashrun download), so the backlog
+doesn't have to come through the API. It only takes runs from before SYNC_SINCE, which syncs
+never touch, and never replaces a run already saved.
 """
 import json
 import os
@@ -209,10 +214,48 @@ def sync(client, since=None, root=None, step=None, log=print):
     return result
 
 
+def import_folder(folder, before=None, root=None, log=print):
+    """Copy activity files from a folder into the run copy: runs that start before `before`
+    (SYNC_SINCE) and aren't saved yet. Returns counts."""
+    before = before or SYNC_SINCE
+    date.fromisoformat(before)
+    os.makedirs(_dir("activities", root=root), exist_ok=True)
+    saved = _activities(root)
+    counts = {"added": 0, "already": 0, "too_new": 0, "bad": 0}
+    for name in sorted(os.listdir(folder)):
+        if not name.endswith(".json"):
+            continue
+        try:
+            with open(os.path.join(folder, name)) as f:
+                a = json.load(f)
+            aid = int(a["activityId"])
+            start = a["startDateTimeLocal"][:10]
+            date.fromisoformat(start)
+            summary(a)
+            # Manual entries have no recording (recordingKeys is null); they're still runs.
+            if not (0 < aid < 10 ** 12) or not isinstance(a.get("recordingKeys"), (list, type(None))):
+                raise ValueError("not a Smashrun activity")
+        except (ValueError, KeyError, TypeError, AttributeError) as e:
+            log("  skipping %s: %s" % (name, e))
+            counts["bad"] += 1
+            continue
+        if start >= before:
+            counts["too_new"] += 1
+        elif aid in saved:
+            counts["already"] += 1
+        else:
+            _write_atomic(_dir("activities", "%d.json" % aid, root=root), a)
+            counts["added"] += 1
+    rebuild(root)
+    log("import: %(added)d added, %(already)d already saved, %(too_new)d left to sync, %(bad)d unreadable" % counts)
+    return counts
+
+
 def main(argv=None):
     import argparse
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("command", choices=["sync", "rebuild"])
+    ap.add_argument("command", choices=["sync", "rebuild", "import"])
+    ap.add_argument("folder", nargs="?", help="for import: the folder of activity .json files")
     ap.add_argument("--since", default=None, help="first date to copy (default SYNC_SINCE, %s)" % SYNC_SINCE)
     ap.add_argument("--dir", default=None, help="mirror folder (default MIRROR_DIR, %s)" % MIRROR_DIR)
     ap.add_argument("--token-file", default=os.environ.get("TOKEN_FILE", S.DEFAULT_TOKEN))
@@ -220,6 +263,11 @@ def main(argv=None):
     if args.command == "rebuild":
         index = rebuild(args.dir)
         print("rebuilt index: %d runs" % len(index["runs"]))
+        return
+    if args.command == "import":
+        if not args.folder:
+            ap.error("import needs a folder")
+        import_folder(args.folder, before=args.since, root=args.dir)
         return
     sync(S.Client(args.token_file), since=args.since, root=args.dir)
 
