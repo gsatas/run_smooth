@@ -105,8 +105,10 @@ into the log by hand.
   token and passphrase fields. `POST /token` checks the token against `/my/userinfo` before
   writing it (mode 600); only the token file is mounted read-write.
 - **Test activity:** **47383782** (uploaded 2026-11-04) is a copy of run 47363102 dated
-  2026-11-04 07:00, with notes saying it's a test. The user approved it for testing. Delete it
-  once testing is done.
+  2026-11-04 07:00, with notes saying it's a test. Deleted on 2026-11-04 after testing; a copy is
+  in `backups/47383782_deleted_*.json`. For the next test, upload a fresh copy the same way and
+  get the user's go-ahead first. After a DELETE, `GET /my/activities/<id>` kept returning the run
+  for a while, but it was gone from the recent list right away.
 - Date-style links (`/run/2026/11/3`) are now rejected with a clear message; before, they parsed
   as activity ID 2026. The user will paste ID links.
 
