@@ -26,7 +26,7 @@ from smoothrun import mirror
 MILE = 1609.344
 FT = 0.3048
 FACTS_VERSION = 4
-RESULT_VERSION = 1
+RESULT_VERSION = 2
 CATALOG = os.environ.get("ACH_CATALOG",
                          os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                       "achievements", "catalog.json"))
@@ -747,6 +747,33 @@ TARGETS = {
 }
 
 
+# Series: achievements where reaching a bigger one means you've reached the smaller ones. The page
+# shows the highest earned and the next to go in each, and hides the rest.
+SERIES = {
+    "streak_3_days": "day_streak", "streak_5_days": "day_streak", "weekday_all_7": "day_streak",
+    "weekly_3x_3weeks": "3x_weeks", "weekly_3x_6weeks": "3x_weeks",
+    "weekly_3x_3months": "3x_months", "weekly_3x_6months": "3x_months",
+    "distance_growth_3months": "growth", "distance_growth_6months": "growth",
+    "runs_100": "runs", "runs_500": "runs", "runs_1000": "runs",
+    "active_years_3": "years", "active_years_5": "years",
+    "comeback_30days": "comeback", "comeback_90days": "comeback",
+    "hill_climber": "climb_one", "vertical_mile": "climb_one",
+    "mountain_goat": "climb_total", "stairway_to_heaven": "climb_total",
+    "negative_split_once": "negative", "negative_split_three": "negative",
+    "singing_in_the_rain": "rain", "rain_check": "rain", "snow_problem": "snow", "snowflake": "snow",
+    "race_day": "races", "serial_racer": "races",
+}
+
+
+def series_of(aid):
+    for pattern, key in ((r"total_", "total"), (r"single_", "single"), (r"monthly_\d+_miles", "month_miles"),
+                         (r"weekly_\d+_miles", "week_miles"), (r"monthly_\d+_days", "month_days"),
+                         (r"mile_sub_", "mile"), (r"5k_sub_", "5k"), (r"10k_sub_", "10k"), (r"half_sub_", "half")):
+        if re.match(pattern, aid):
+            return key
+    return SERIES.get(aid)
+
+
 def _total(target):
     return {"kind": "history", "value": lambda rs: sum(r["miles"] for r in rs), "unit": "mi", "target": target}
 
@@ -800,7 +827,8 @@ def evaluate(catalog, runs):
                         lo = mid + 1
                 earned.append({"at": lv, "date": runs[lo - 1]["date"], "run": runs[lo - 1]["id"]})
         nxt = next((lv for lv in levels if not any(e["at"] == lv for e in earned)), None)
-        out.append({"id": entry["id"], "earned": earned, "levels": levels if len(levels) > 1 else [],
+        out.append({"id": entry["id"], "series": series_of(entry["id"]), "first": levels[0],
+                    "earned": earned, "levels": levels if len(levels) > 1 else [],
                     "value": value, "next": nxt, "unit": rule["unit"], "lower": rule.get("lower", False)})
     return out
 

@@ -131,4 +131,8 @@ assert abs(f["elapsed_s"] - (n * 3 + 60)) < 1e-6 and f["finish"] == "2026-05-02T
 assert len(f["mile_splits"]) == 2 and abs(sum(f["mile_splits"]) - 2 * MILE / (1611.3 / 600)) < 5, f["mile_splits"]
 assert f["out_back"] > 0.9 and f["start_end_m"] < 5 and f["sunrise"].startswith("2026-05-02T05:")
 
+# --- series group the ladders
+assert A.series_of("total_6") == "total" and A.series_of("monthly_20_miles") == "month_miles"
+assert A.series_of("monthly_8_days") == "month_days" and A.series_of("mile_sub_10") == "mile" and A.series_of("pi_day") is None
+
 print("all achievement tests passed")
