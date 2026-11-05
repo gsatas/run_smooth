@@ -98,7 +98,7 @@ python -m smoothrun.mirror sync --since 2026-01-01      # or from the command li
 python -m smoothrun.mirror rebuild                      # recompute index.json from the files
 ```
 
-The service serves `GET /runs`, `GET /runs/<id>`, `GET /runs/sync` and `POST /runs/sync`; Mile
+The service serves `GET /runs`, `GET /runs/<id>`, `GET /runs/<id>/original` (summary of the backed-up original of a smoothed run), `GET /runs/sync` and `POST /runs/sync`; Mile
 Marker forwards them as `/api/runs/...`.
 
 ## How it works

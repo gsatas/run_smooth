@@ -128,7 +128,12 @@ stats and plots on it, kept separate from the plan and Smooth features.
   distance (last 12 weeks, from SYNC_SINCE); pace per run (faster higher, races as rings, line =
   pace of the last 5 runs together); sortable run list linking to Smashrun (username saved at
   sync). Phones hide the climb and temperature columns. mi/km is per device (localStorage).
-- **Phase 3:** one-run page: splits, pace/elevation/cadence vs distance, route as SVG.
+- **Phase 3, done:** one-run page at `#stats/<id>`, drawn in the browser from the saved activity.
+  Moving time leaves out each pause (`pauseIndexes` mark the gap before that point), which
+  matches Smashrun's duration. Splits interpolate moving time at each mile/km. Pace, cadence and
+  HR are averaged over 200 m; cadence is stored in strides/min and shown as steps/min (×2).
+  Route is an SVG line (no map tiles, so the CSP stays closed). One cursor across all charts and
+  the route. Smoothed runs show the original's distance from `GET /runs/<id>/original`.
 - **Later:** achievements (the user's examples are in `~/RunningAchievements.xlsx`), best efforts
   inside runs, PRs, calendar heatmap, backlog sync.
 
